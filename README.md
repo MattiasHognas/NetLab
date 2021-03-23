@@ -4,18 +4,18 @@ Shared drawing microservice
 
 ## Tools
 
+### Build
+
+Cake
+```
+dotnet cake
+```
+
 ### Migrate data
 
-Migrate Auth changes
+Migrate
 ```
-cd /workspace/src/service/Lab.Service.Auth/Lab.Service.Auth.Api \
-dotnet ef migrations add "<NAME>" --project ../Lab.Service.Auth.Data/
-```
-
-Migrate Dashboard changes
-```
-cd /workspace/src/service/Lab.Service.Dashboard/Lab.Service.Dashboard.Api \
-dotnet ef migrations add "<NAME>" --project ../Lab.Service.Dashboard.Data/
+???
 ```
 
 ## Todo
@@ -61,6 +61,3 @@ dotnet ef migrations add "<NAME>" --project ../Lab.Service.Dashboard.Data/
 - Add video/audio of users trough WebRTC?
 - Add gRPC?
 - Add ability to make 3D models?
-
-
-
