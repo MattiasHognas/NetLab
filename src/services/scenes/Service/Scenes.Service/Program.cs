@@ -18,7 +18,7 @@ namespace Scenes.Service
         public static async Task<int> Main(string[] args)
         {
             Log.Logger = CreateBootstrapLogger();
-            IHostEnvironment hostEnvironment = null;
+            IHostEnvironment? hostEnvironment = null;
 
             try
             {

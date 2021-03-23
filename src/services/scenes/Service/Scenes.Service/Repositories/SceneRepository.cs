@@ -83,7 +83,7 @@ namespace Scenes.Service.Repositories
             return Task.CompletedTask;
         }
 
-        public Task<Scene> GetAsync(int sceneId, CancellationToken cancellationToken)
+        public Task<Scene?> GetAsync(int sceneId, CancellationToken cancellationToken)
         {
             var scene = Scenes.FirstOrDefault(x => x.SceneId == sceneId);
             return Task.FromResult(scene);

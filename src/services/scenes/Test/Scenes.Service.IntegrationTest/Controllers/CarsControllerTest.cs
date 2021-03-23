@@ -488,8 +488,8 @@ namespace Scenes.Service.IntegrationTest.Controllers
 
         private async Task AssertPageUrlsAsync(
             HttpResponseMessage response,
-            string nextPageUrl,
-            string previousPageUrl,
+            string? nextPageUrl,
+            string? previousPageUrl,
             int expectedPageCount,
             int actualPageCount,
             int totalCount)

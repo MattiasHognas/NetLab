@@ -35,13 +35,13 @@ namespace Scenes.Service.ViewModels
         /// Gets or sets the next page URL.
         /// </summary>
         /// <example>/scenes?First=10&amp;After=MjAxOS0xMC0yNlQxNDozNDo1MC4xOTgwNzY2KzAwOjAw</example>
-        public Uri NextPageUrl { get; set; }
+        public Uri? NextPageUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the previous page URL.
         /// </summary>
         /// <example>/scenes?First=10&amp;Before=MjAxOS0xMC0yNlQxNDozNDo1MC4xOTgwNzY2KzAwOjAw</example>
-        public Uri PreviousPageUrl { get; set; }
+        public Uri? PreviousPageUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the URL to the first page.
