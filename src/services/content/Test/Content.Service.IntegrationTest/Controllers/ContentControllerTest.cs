@@ -184,7 +184,8 @@ namespace Content.Service.IntegrationTest.Controllers
         {
             var filters = new Models.ContentOptionFilter
             {
-                SceneId = 1,
+                PageId = 1,
+                WorkspaceId = 1,
             };
             var content = new List<Models.Content> { new Models.Content { ContentId = 1, Modified = new DateTimeOffset(2000, 1, 2, 3, 4, 5, TimeSpan.FromHours(6)) } };
             this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
@@ -202,7 +203,8 @@ namespace Content.Service.IntegrationTest.Controllers
         {
             var filters = new Models.ContentOptionFilter
             {
-                SceneId = 999,
+                PageId = 1,
+                WorkspaceId = 999,
             };
             var content = new List<Models.Content>();
             this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
@@ -219,7 +221,8 @@ namespace Content.Service.IntegrationTest.Controllers
         {
             var filters = new Models.ContentOptionFilter
             {
-                SceneId = 1,
+                PageId = 1,
+                WorkspaceId = 1,
             };
             var content = new List<Models.Content>();
             this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
@@ -239,7 +242,8 @@ namespace Content.Service.IntegrationTest.Controllers
         {
             var filters = new Models.ContentOptionFilter
             {
-                SceneId = 1,
+                PageId = 1,
+                WorkspaceId = 1,
             };
             var content = new List<Models.Content> { new Models.Content() { Modified = new DateTimeOffset(2000, 1, 1, 0, 0, 1, TimeSpan.Zero) } };
             this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
@@ -261,12 +265,12 @@ namespace Content.Service.IntegrationTest.Controllers
             };
             var saveContent = new SaveContent()
             {
-                SceneId = 1,
+                PageId = 1,
+                WorkspaceId = 1,
                 X1 = 1,
                 X2 = 2,
                 Y1 = 1,
                 Y2 = 2,
-                UserId = 1,
             };
             var content = new Models.Content() { ContentId = 1 };
             this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
@@ -332,12 +336,12 @@ namespace Content.Service.IntegrationTest.Controllers
             };
             var saveContent = new SaveContent()
             {
-                SceneId = 1,
+                PageId = 1,
+                WorkspaceId = 1,
                 X1 = 1,
                 X2 = 2,
                 Y1 = 1,
                 Y2 = 2,
-                UserId = 1,
             };
             var content = new List<Models.Content> { new Models.Content() { ContentId = 1 } };
             this.ContentRepositoryMock
@@ -363,12 +367,12 @@ namespace Content.Service.IntegrationTest.Controllers
             };
             var saveContent = new SaveContent()
             {
-                SceneId = 1,
+                PageId = 1,
+                WorkspaceId = 1,
                 X1 = 1,
                 X2 = 2,
                 Y1 = 1,
                 Y2 = 2,
-                UserId = 1,
             };
             var content = new List<Models.Content>();
             this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
@@ -448,7 +452,7 @@ namespace Content.Service.IntegrationTest.Controllers
             patch.Add(x => x.X1, 2);
             var json = JsonConvert.SerializeObject(patch);
             using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            var content = new List<Models.Content> { new Models.Content() { ContentId = 1, SceneId = 1, X1 = 1, X2 = 2, Y1 = 1, Y2 = 2, UserId = 1 } };
+            var content = new List<Models.Content> { new Models.Content() { ContentId = 1, PageId = 1, WorkspaceId = 1, X1 = 1, X2 = 2, Y1 = 1, Y2 = 2 } };
             this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
             this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
             this.ContentRepositoryMock.Setup(x => x.UpdateAsync(content.First(), It.IsAny<CancellationToken>())).ReturnsAsync(content.First());
@@ -471,9 +475,14 @@ namespace Content.Service.IntegrationTest.Controllers
                 uriString = QueryHelpers.AddQueryString(uriString, $"ContentId", filters.ContentId.Value.ToString(provider));
             }
 
-            if (filters.SceneId.HasValue)
+            if (filters.PageId.HasValue)
             {
-                uriString = QueryHelpers.AddQueryString(uriString, $"SceneId", filters.SceneId.Value.ToString(provider));
+                uriString = QueryHelpers.AddQueryString(uriString, $"PageId", filters.PageId.Value.ToString(provider));
+            }
+
+            if (filters.WorkspaceId.HasValue)
+            {
+                uriString = QueryHelpers.AddQueryString(uriString, $"SceneId", filters.WorkspaceId.Value.ToString(provider));
             }
 
             return uriString;

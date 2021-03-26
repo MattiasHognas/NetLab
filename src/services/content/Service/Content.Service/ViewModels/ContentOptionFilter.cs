@@ -13,6 +13,11 @@ namespace Content.Service.ViewModels
         /// <summary>
         /// Gets or sets the scene id which is filtered.
         /// </summary>
-        public int? SceneId { get; set; }
+        public int? PageId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the workspace id which is filtered.
+        /// </summary>
+        public int? WorkspaceId { get; set; }
     }
 }

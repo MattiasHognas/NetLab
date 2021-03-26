@@ -13,9 +13,14 @@
         public int ContentId { get; set; }
 
         /// <summary>
-        /// Gets or sets the scene id.
+        /// Gets or sets the page id.
         /// </summary>
-        public int SceneId { get; set; }
+        public int PageId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the workspace id.
+        /// </summary>
+        public int WorkspaceId { get; set; }
 
         /// <summary>
         /// Gets or sets the first X position.
@@ -36,11 +41,6 @@
         /// Gets or sets the second Y position.
         /// </summary>
         public int Y2 { get; set; }
-
-        /// <summary>
-        /// Gets or sets the user id.
-        /// </summary>
-        public int UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the created date.

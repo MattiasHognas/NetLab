@@ -8,10 +8,16 @@ namespace Content.Service.ViewModels
     public class SaveContent
     {
         /// <summary>
-        /// Gets or sets the scene id of the content.
+        /// Gets or sets the page id of the content.
         /// </summary>
         [Range(1, int.MaxValue)]
-        public int SceneId { get; set; } = default!;
+        public int PageId { get; set; } = default!;
+
+        /// <summary>
+        /// Gets or sets the workspace id of the content.
+        /// </summary>
+        [Range(1, int.MaxValue)]
+        public int WorkspaceId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the X1 of the content.
@@ -36,11 +42,5 @@ namespace Content.Service.ViewModels
         /// </summary>
         [Range(1, int.MaxValue)]
         public int Y2 { get; set; } = default!;
-
-        /// <summary>
-        /// Gets or sets the user id of the content.
-        /// </summary>
-        [Range(1, int.MaxValue)]
-        public int UserId { get; set; } = default!;
     }
 }

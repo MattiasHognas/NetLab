@@ -13,9 +13,14 @@ namespace Content.Service.ViewModels
         public int ContentId { get; set; }
 
         /// <summary>
-        /// Gets or sets the scene id of the content.
+        /// Gets or sets the page id of the content.
         /// </summary>
-        public int SceneId { get; set; } = default!;
+        public int PageId { get; set; } = default!;
+
+        /// <summary>
+        /// Gets or sets the workspace id of the content.
+        /// </summary>
+        public int WorkspaceId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the X1 of the content.
@@ -36,11 +41,6 @@ namespace Content.Service.ViewModels
         /// Gets or sets the Y2 of the content.
         /// </summary>
         public int Y2 { get; set; } = default!;
-
-        /// <summary>
-        /// Gets or sets the user id of the content.
-        /// </summary>
-        public int UserId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the URL used to retrieve the resource conforming to REST'ful JSON http://restfuljson.org/.

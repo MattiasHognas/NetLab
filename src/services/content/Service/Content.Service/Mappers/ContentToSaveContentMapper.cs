@@ -36,12 +36,12 @@ namespace Content.Service.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            destination.SceneId = source.SceneId;
+            destination.PageId = source.PageId;
+            destination.WorkspaceId = source.WorkspaceId;
             destination.X1 = source.X1;
             destination.X2 = source.X2;
             destination.Y1 = source.Y1;
             destination.Y2 = source.Y2;
-            destination.UserId = source.UserId;
         }
 
         /// <summary>
@@ -68,12 +68,12 @@ namespace Content.Service.Mappers
                 destination.Created = now;
             }
 
-            destination.SceneId = source.SceneId;
+            destination.PageId = source.PageId;
+            destination.WorkspaceId = source.WorkspaceId;
             destination.X1 = source.X1;
             destination.X2 = source.X2;
             destination.Y1 = source.Y1;
             destination.Y2 = source.Y2;
-            destination.UserId = source.UserId;
             destination.Modified = now;
         }
     }

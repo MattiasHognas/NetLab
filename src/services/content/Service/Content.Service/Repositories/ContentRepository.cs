@@ -17,37 +17,37 @@ namespace Content.Service.Repositories
             new Content()
             {
                 ContentId = 1,
-                SceneId = 1,
+                PageId = 1,
+                WorkspaceId = 1,
                 Created = DateTimeOffset.UtcNow.AddDays(-8),
                 X1 = 1,
                 X2 = 2,
                 Y1 = 1,
                 Y2 = 2,
-                UserId = 1,
                 Modified = DateTimeOffset.UtcNow.AddDays(-8),
             },
             new Content()
             {
                 ContentId = 2,
-                SceneId = 1,
+                PageId = 1,
+                WorkspaceId = 1,
                 Created = DateTimeOffset.UtcNow.AddDays(-8),
                 X1 = 2,
                 X2 = 3,
                 Y1 = 2,
                 Y2 = 3,
-                UserId = 1,
                 Modified = DateTimeOffset.UtcNow.AddDays(-8),
             },
             new Content()
             {
                 ContentId = 3,
-                SceneId = 1,
+                PageId = 1,
+                WorkspaceId = 1,
                 Created = DateTimeOffset.UtcNow.AddDays(-8),
                 X1 = 3,
                 X2 = 4,
                 Y1 = 3,
                 Y2 = 4,
-                UserId = 1,
                 Modified = DateTimeOffset.UtcNow.AddDays(-8),
             },
         };
@@ -98,7 +98,8 @@ namespace Content.Service.Repositories
             Task.FromResult(Content
                 .OrderBy(x => x.Created)
                 .If(contentOptionFilter.ContentId.HasValue, x => x.Where(y => y.ContentId == contentOptionFilter.ContentId))
-                .If(contentOptionFilter.SceneId.HasValue, x => x.Where(y => y.SceneId == contentOptionFilter.SceneId))
+                .If(contentOptionFilter.PageId.HasValue, x => x.Where(y => y.PageId == contentOptionFilter.PageId))
+                .If(contentOptionFilter.WorkspaceId.HasValue, x => x.Where(y => y.WorkspaceId == contentOptionFilter.WorkspaceId))
                 .ToList());
 
         /// <summary>
