@@ -92,7 +92,7 @@ Task("Publish")
 //#if (Docker)
 Task("DockerBuild")
     .Description("Builds a Docker image.")
-    .DoesForEach(GetFiles("./src/services/**/Service/**/Dockerfile"), dockerfile =>
+    .DoesForEach(GetFiles("./src/services/**/Dockerfile"), dockerfile =>
     {
         tag = tag ?? dockerfile.GetDirectory().GetDirectoryName().ToLower();
         var version = GetVersion();
@@ -104,28 +104,14 @@ Task("DockerBuild")
         // docker buildx inspect --bootstrap
         // To stop using buildx remove the buildx parameter and the --platform, --progress switches.
         // See https://github.com/docker/buildx
-        StartProcess(
-            "docker",
-            new ProcessArgumentBuilder()
-                .Append("buildx")
-                .Append("build")
-                .AppendSwitchQuoted("--platform", platform)
-                .AppendSwitchQuoted("--progress", BuildSystem.IsLocalBuild ? "auto" : "plain")
-                .Append($"--push={push}")
-                .AppendSwitchQuoted("--tag", $"{tag}:{version}")
-                .AppendSwitchQuoted("--build-arg", $"Configuration={configuration}")
-                .AppendSwitchQuoted("--label", $"org.opencontainers.image.created={DateTimeOffset.UtcNow:o}")
-                .AppendSwitchQuoted("--label", $"org.opencontainers.image.revision={gitCommitSha}")
-                .AppendSwitchQuoted("--label", $"org.opencontainers.image.version={version}")
-                .AppendSwitchQuoted("--file", dockerfile.ToString())
-                .Append(".")
-                .RenderSafe());
-
-        // If you'd rather not use buildx, then you can uncomment these lines instead.
         // StartProcess(
         //     "docker",
         //     new ProcessArgumentBuilder()
+        //         .Append("buildx")
         //         .Append("build")
+        //         .AppendSwitchQuoted("--platform", platform)
+        //         .AppendSwitchQuoted("--progress", BuildSystem.IsLocalBuild ? "auto" : "plain")
+        //         .Append($"--push={push}")
         //         .AppendSwitchQuoted("--tag", $"{tag}:{version}")
         //         .AppendSwitchQuoted("--build-arg", $"Configuration={configuration}")
         //         .AppendSwitchQuoted("--label", $"org.opencontainers.image.created={DateTimeOffset.UtcNow:o}")
@@ -134,14 +120,28 @@ Task("DockerBuild")
         //         .AppendSwitchQuoted("--file", dockerfile.ToString())
         //         .Append(".")
         //         .RenderSafe());
-        // if (push)
-        // {
-        //     StartProcess(
-        //         "docker",
-        //         new ProcessArgumentBuilder()
-        //             .AppendSwitchQuoted("push", $"{tag}:{version}")
-        //             .RenderSafe());
-        // }
+
+        // If you'd rather not use buildx, then you can uncomment these lines instead.
+        StartProcess(
+            "docker",
+            new ProcessArgumentBuilder()
+                .Append("build")
+                .AppendSwitchQuoted("--tag", $"{tag}:{version}")
+                .AppendSwitchQuoted("--build-arg", $"Configuration={configuration}")
+                .AppendSwitchQuoted("--label", $"org.opencontainers.image.created={DateTimeOffset.UtcNow:o}")
+                .AppendSwitchQuoted("--label", $"org.opencontainers.image.revision={gitCommitSha}")
+                .AppendSwitchQuoted("--label", $"org.opencontainers.image.version={version}")
+                .AppendSwitchQuoted("--file", dockerfile.ToString())
+                .Append(dockerfile.GetDirectory().ToString())
+                .RenderSafe());
+        if (push)
+        {
+            StartProcess(
+                "docker",
+                new ProcessArgumentBuilder()
+                    .AppendSwitchQuoted("push", $"{tag}:{version}")
+                    .RenderSafe());
+        }
 
         string GetVersion()
         {

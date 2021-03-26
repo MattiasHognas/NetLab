@@ -365,6 +365,18 @@ dotnet_naming_rule.sanity_check_uncovered_field_case_rule.symbols  = sanity_chec
 dotnet_naming_rule.sanity_check_uncovered_field_case_rule.style    = internal_error_style
 dotnet_naming_rule.sanity_check_uncovered_field_case_rule.severity = error
 
+# A C# code file is missing a standard file header.
+# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md
+dotnet_diagnostic.SA1633.severity = silent
+
+# A single-line comment within C# code is not preceded by a blank line.
+# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1515.md
+dotnet_diagnostic.SA1515.severity = silent
+
+# Fix formatting.
+# https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#rule-id-ide0055-fix-formatting
+dotnet_diagnostic.IDE0055.severity = silent
+
 
 ##########################################
 # Other Naming Rules
