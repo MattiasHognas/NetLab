@@ -1,5 +1,7 @@
 namespace Workspace.Service.ViewModels
 {
+    using System.ComponentModel.DataAnnotations;
+
     /// <summary>
     /// The book save viewmodel.
     /// </summary>
@@ -8,6 +10,7 @@ namespace Workspace.Service.ViewModels
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
+        [Required]
         public string Name { get; set; } = default!;
 
         /// <summary>
