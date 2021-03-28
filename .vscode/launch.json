@@ -1,19 +1,50 @@
 {
   "version": "0.2.0",
   "configurations": [
-      {
-          "name": "Cake build",
-          "type": "coreclr",
-          "request": "launch",
-          "program": "${workspaceRoot}/tools/Cake.CoreCLR/Cake.dll",
-          "args": [
-              "${workspaceRoot}/build.cake",
-              "--debug",
-              "--verbosity=diagnostic"
-          ],
-          "cwd": "${workspaceRoot}",
-          "stopAtEntry": true,
-          "externalConsole": false
-      }
+    {
+      "name": "Cake Build Docker",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "dotnet",
+      "args": [
+        "cake",
+        "build.cake",
+        "--target=BuildDocker",
+        "--verbosity=diagnostic"
+      ],
+      "cwd": "${workspaceRoot}",
+      "stopAtEntry": true,
+      "externalConsole": false
+    },
+    {
+      "name": "Cake Publish Artifacts",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "dotnet",
+      "args": [
+        "cake",
+        "build.cake",
+        "--target=PublishArtifacts",
+        "--verbosity=diagnostic"
+      ],
+      "cwd": "${workspaceRoot}",
+      "stopAtEntry": true,
+      "externalConsole": false
+    },
+    {
+      "name": "Cake Start All",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "dotnet",
+      "args": [
+        "cake",
+        "build.cake",
+        "--target=StartAll",
+        "--verbosity=diagnostic"
+      ],
+      "cwd": "${workspaceRoot}",
+      "stopAtEntry": true,
+      "externalConsole": false
+    }
   ]
 }

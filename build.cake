@@ -1,4 +1,4 @@
-var target = Argument("Target", "RunAll");
+var target = Argument("Target", "StartAll");
 var configuration =
     HasArgument("Configuration") ? Argument<string>("Configuration") :
     EnvironmentVariable("Configuration") is not null ? EnvironmentVariable("Configuration") :
@@ -211,7 +211,7 @@ Task("PublishArtifacts")
    .IsDependentOn("Build")
    .IsDependentOn("Test")
    .IsDependentOn("Publish");
-Task("RunAll")
+Task("StartAll")
     .Description("Cleans, restores NuGet packages, builds the solution, runs unit tests and then run all.")
     .IsDependentOn("Build")
     .IsDependentOn("Test")
