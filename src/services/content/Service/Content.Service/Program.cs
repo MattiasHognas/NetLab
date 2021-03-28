@@ -26,7 +26,7 @@ namespace Content.Service
         public static async Task<int> Main(string[] args)
         {
             Log.Logger = CreateBootstrapLogger();
-            IHostEnvironment? hostEnvironment = null;
+            var hostEnvironment = null as IHostEnvironment;
 
             try
             {
