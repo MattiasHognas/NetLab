@@ -3,14 +3,14 @@
     using System;
 
     /// <summary>
-    /// The workspace model.
+    /// The book model.
     /// </summary>
-    public class Workspace
+    public class Book
     {
         /// <summary>
-        /// Gets or sets the workspace id.
+        /// Gets or sets the book id.
         /// </summary>
-        public int WorkspaceId { get; set; }
+        public int BookId { get; set; }
 
         /// <summary>
         /// Gets or sets the name.

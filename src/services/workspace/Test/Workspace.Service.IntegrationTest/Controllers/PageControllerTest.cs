@@ -1,4 +1,4 @@
-namespace Content.Service.IntegrationTest.Controllers
+namespace Workspace.Service.IntegrationTest.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -12,22 +12,22 @@ namespace Content.Service.IntegrationTest.Controllers
     using System.Threading;
     using System.Threading.Tasks;
     using Boxed.AspNetCore;
-    using Content.Service.ViewModels;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.WebUtilities;
     using Moq;
     using Newtonsoft.Json;
+    using Workspace.Service.ViewModels;
     using Xunit;
     using Xunit.Abstractions;
 
-    public class ContentControllerTest : CustomWebApplicationFactory<Startup>
+    public class PageControllerTest : CustomWebApplicationFactory<Startup>
     {
         private readonly HttpClient client;
         private readonly MediaTypeFormatterCollection formatters;
 
-        public ContentControllerTest(ITestOutputHelper testOutputHelper)
+        public PageControllerTest(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
             this.client = this.CreateClient();
@@ -37,9 +37,9 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task Options_ContentRoot_Returns200OkAsync()
+        public async Task Options_PageRoot_Returns200OkAsync()
         {
-            using var request = new HttpRequestMessage(HttpMethod.Options, "content/1");
+            using var request = new HttpRequestMessage(HttpMethod.Options, "page/1");
 
             var response = await this.client.SendAsync(request).ConfigureAwait(false);
 
@@ -59,11 +59,11 @@ namespace Content.Service.IntegrationTest.Controllers
         [Fact]
         public async Task Options_Filter_Returns200OkAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
-                ContentId = 1,
+                PageId = 1,
             };
-            var uriString = AddQueryString("content", filters);
+            var uriString = AddQueryString("page", filters);
             using var request = new HttpRequestMessage(HttpMethod.Options, uriString);
 
             var response = await this.client.SendAsync(request).ConfigureAwait(false);
@@ -81,9 +81,9 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task Options_ContentId_Returns200OkAsync()
+        public async Task Options_PageId_Returns200OkAsync()
         {
-            using var request = new HttpRequestMessage(HttpMethod.Options, "content/1");
+            using var request = new HttpRequestMessage(HttpMethod.Options, "page/1");
 
             var response = await this.client.SendAsync(request).ConfigureAwait(false);
 
@@ -101,30 +101,30 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task Delete_ContentFound_Returns204NoContentAsync()
+        public async Task Delete_PageFound_Returns204NoPageAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
-                ContentId = 1,
+                PageId = 1,
             };
-            var content = new List<Models.Content> { new Models.Content() };
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-            this.ContentRepositoryMock.Setup(x => x.DeleteAsync(content.First(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-            var response = await this.client.DeleteAsync(new Uri("/content/1", UriKind.Relative)).ConfigureAwait(false);
+            var page = new List<Models.Page> { new Models.Page() };
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
+            this.PageRepositoryMock.Setup(x => x.DeleteAsync(page.First(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+            var response = await this.client.DeleteAsync(new Uri("/page/1", UriKind.Relative)).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
         [Fact]
-        public async Task Delete_ContentNotFound_Returns404NotFoundAsync()
+        public async Task Delete_PageNotFound_Returns404NotFoundAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
-                ContentId = 999,
+                PageId = 999,
             };
-            var content = new List<Models.Content>();
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-            var response = await this.client.DeleteAsync(new Uri("/content/999", UriKind.Relative)).ConfigureAwait(false);
+            var page = new List<Models.Page>();
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
+            var response = await this.client.DeleteAsync(new Uri("/page/999", UriKind.Relative)).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             var problemDetails = await response.Content.ReadAsAsync<ProblemDetails>(this.formatters).ConfigureAwait(false);
@@ -132,33 +132,33 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task Get_ContentFound_Returns200OkAsync()
+        public async Task Get_PageFound_Returns200OkAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
-                ContentId = 1,
+                PageId = 1,
             };
-            var content = new List<Models.Content> { new Models.Content { ContentId = 1 } };
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-            var uriString = AddQueryString("/content", filters);
+            var page = new List<Models.Page> { new Models.Page { PageId = 1 } };
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
+            var uriString = AddQueryString("/page", filters);
             var response = await this.client.GetAsync(new Uri(uriString, UriKind.Relative)).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(ContentType.RestfulJson, response.Content.Headers.ContentType?.MediaType);
-            var contentViewModel = await response.Content.ReadAsAsync<List<Models.Content>>(this.formatters).ConfigureAwait(false);
-            Assert.Equal(content.First().ContentId, contentViewModel.First().ContentId);
+            var pageViewModel = await response.Content.ReadAsAsync<List<Models.Page>>(this.formatters).ConfigureAwait(false);
+            Assert.Equal(page.First().PageId, pageViewModel.First().PageId);
         }
 
         [Fact]
-        public async Task Get_ContentNotFound_Returns404NotFoundAsync()
+        public async Task Get_PageNotFound_Returns404NotFoundAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
-                ContentId = 999,
+                PageId = 999,
             };
-            var content = new List<Models.Content>();
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-            var uriString = AddQueryString("/content", filters);
+            var page = new List<Models.Page>();
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
+            var uriString = AddQueryString("/page", filters);
             var response = await this.client.GetAsync(new Uri(uriString, UriKind.Relative)).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -169,7 +169,7 @@ namespace Content.Service.IntegrationTest.Controllers
         [Fact]
         public async Task Get_InvalidAcceptHeader_Returns406MethodNotAllowedAsync()
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, "/content/1");
+            using var request = new HttpRequestMessage(HttpMethod.Get, "/page/1");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentType.Text));
 
             var response = await this.client.SendAsync(request).ConfigureAwait(false);
@@ -180,35 +180,33 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task Get_ContentBySceneFound_Returns200OkAsync()
+        public async Task Get_PageByPageFound_Returns200OkAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
                 PageId = 1,
-                BookId = 1,
             };
-            var content = new List<Models.Content> { new Models.Content { ContentId = 1, Modified = new DateTimeOffset(2000, 1, 2, 3, 4, 5, TimeSpan.FromHours(6)) } };
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-            var uriString = AddQueryString("/content", filters);
+            var page = new List<Models.Page> { new Models.Page { PageId = 1, Modified = new DateTimeOffset(2000, 1, 2, 3, 4, 5, TimeSpan.FromHours(6)) } };
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
+            var uriString = AddQueryString("/page", filters);
             var response = await this.client.GetAsync(new Uri(uriString, UriKind.Relative)).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(ContentType.RestfulJson, response.Content.Headers.ContentType?.MediaType);
-            var contentViewModel = await response.Content.ReadAsAsync<List<Content>>(this.formatters).ConfigureAwait(false);
-            Assert.Equal(content.First().ContentId, contentViewModel.First().ContentId);
+            var pageViewModel = await response.Content.ReadAsAsync<List<Page>>(this.formatters).ConfigureAwait(false);
+            Assert.Equal(page.First().PageId, pageViewModel.First().PageId);
         }
 
         [Fact]
-        public async Task Get_ContentBySceneNotFound_Returns404NotFoundAsync()
+        public async Task Get_PageByPageNotFound_Returns404NotFoundAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
-                PageId = 1,
-                BookId = 999,
+                PageId = 999,
             };
-            var content = new List<Models.Content>();
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-            var uriString = AddQueryString("/content", filters);
+            var page = new List<Models.Page>();
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
+            var uriString = AddQueryString("/page", filters);
             var response = await this.client.GetAsync(new Uri(uriString, UriKind.Relative)).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -217,16 +215,15 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task Get_InvalidAcceptHeaderByScene_Returns406NotAcceptableAsync()
+        public async Task Get_InvalidAcceptHeaderByPage_Returns406NotAcceptableAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
                 PageId = 1,
-                BookId = 1,
             };
-            var content = new List<Models.Content>();
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-            var uriString = AddQueryString("/content", filters);
+            var page = new List<Models.Page>();
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
+            var uriString = AddQueryString("/page", filters);
             using var request = new HttpRequestMessage(HttpMethod.Get, uriString);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentType.Text));
 
@@ -238,16 +235,15 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task Get_ContentBySceneHasBeenModifiedSince_Returns200OKAsync()
+        public async Task Get_PageByPageHasBeenModifiedSince_Returns200OKAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
                 PageId = 1,
-                BookId = 1,
             };
-            var content = new List<Models.Content> { new Models.Content() { Modified = new DateTimeOffset(2000, 1, 1, 0, 0, 1, TimeSpan.Zero) } };
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-            var uriString = AddQueryString("/content", filters);
+            var page = new List<Models.Page> { new Models.Page() { Modified = new DateTimeOffset(2000, 1, 1, 0, 0, 1, TimeSpan.Zero) } };
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
+            var uriString = AddQueryString("/page", filters);
             using var request = new HttpRequestMessage(HttpMethod.Get, uriString);
             request.Headers.IfModifiedSince = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
@@ -257,37 +253,37 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task PostContent_Valid_Returns201CreatedAsync()
+        public async Task PostPage_Valid_Returns201CreatedAsync()
         {
-            var filters = new Models.ContentOptionFilter
-            {
-                ContentId = 1,
-            };
-            var saveContent = new SaveContent()
+            var filters = new Models.PageOptionFilter
             {
                 PageId = 1,
-                BookId = 1,
-                Value = "X",
             };
-            var content = new Models.Content() { ContentId = 1 };
+            var savePage = new SavePage()
+            {
+                PageId = 1,
+                Name = "x",
+                Description = "x",
+            };
+            var page = new Models.Page() { PageId = 1 };
             this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
-            this.ContentRepositoryMock
-                .Setup(x => x.AddAsync(It.IsAny<Models.Content>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(content);
+            this.PageRepositoryMock
+                .Setup(x => x.AddAsync(It.IsAny<Models.Page>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(page);
 
-            var response = await this.client.PostAsJsonAsync("content", saveContent).ConfigureAwait(false);
+            var response = await this.client.PostAsJsonAsync("page", savePage).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             Assert.Equal(ContentType.RestfulJson, response.Content.Headers.ContentType?.MediaType);
-            var contentViewModel = await response.Content.ReadAsAsync<Content>(this.formatters).ConfigureAwait(false);
-            var uriString = AddQueryString("/content", filters);
+            var pageViewModel = await response.Content.ReadAsAsync<Page>(this.formatters).ConfigureAwait(false);
+            var uriString = AddQueryString("/page", filters);
             Assert.Equal(new Uri($"http://localhost{uriString}"), response.Headers.Location);
         }
 
         [Fact]
-        public async Task PostContent_Invalid_Returns400BadRequestAsync()
+        public async Task PostPage_Invalid_Returns400BadRequestAsync()
         {
-            var response = await this.client.PostAsJsonAsync("content", new SaveContent()).ConfigureAwait(false);
+            var response = await this.client.PostAsJsonAsync("page", new SavePage()).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             var problemDetails = await response.Content.ReadAsAsync<ProblemDetails>(this.formatters).ConfigureAwait(false);
@@ -295,11 +291,11 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task PostContent_EmptyRequestBody_Returns400BadRequestAsync()
+        public async Task PostPage_EmptyRequestBody_Returns400BadRequestAsync()
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, "content")
+            using var request = new HttpRequestMessage(HttpMethod.Post, "page")
             {
-                Content = new ObjectContent<SaveContent>(null!, new JsonMediaTypeFormatter(), ContentType.Json),
+                Content = new ObjectContent<SavePage>(null!, new JsonMediaTypeFormatter(), ContentType.Json),
             };
 
             var response = await this.client.SendAsync(request).ConfigureAwait(false);
@@ -310,11 +306,11 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task PostContent_UnsupportedMediaType_Returns415UnsupportedMediaTypeAsync()
+        public async Task PostPage_UnsupportedMediaType_Returns415UnsupportedMediaTypeAsync()
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, "content")
+            using var request = new HttpRequestMessage(HttpMethod.Post, "page")
             {
-                Content = new ObjectContent<SaveContent>(new SaveContent(), new JsonMediaTypeFormatter(), ContentType.Text),
+                Content = new ObjectContent<SavePage>(new SavePage(), new JsonMediaTypeFormatter(), ContentType.Text),
             };
 
             var response = await this.client.SendAsync(request).ConfigureAwait(false);
@@ -325,48 +321,50 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task PutContent_Valid_Returns200OkAsync()
+        public async Task PutPage_Valid_Returns200OkAsync()
         {
-            var filters = new Models.ContentOptionFilter
-            {
-                ContentId = 1,
-            };
-            var saveContent = new SaveContent()
+            var filters = new Models.PageOptionFilter
             {
                 PageId = 1,
-                BookId = 1,
             };
-            var content = new List<Models.Content> { new Models.Content() { ContentId = 1 } };
-            this.ContentRepositoryMock
-                .Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(content);
+            var savePage = new SavePage()
+            {
+                PageId = 1,
+                Name = "x",
+                Description = "x",
+            };
+            var page = new List<Models.Page> { new Models.Page() { PageId = 1 } };
+            this.PageRepositoryMock
+                .Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(page);
             this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
-            this.ContentRepositoryMock.Setup(x => x.UpdateAsync(content.First(), It.IsAny<CancellationToken>())).ReturnsAsync(content.First());
+            this.PageRepositoryMock.Setup(x => x.UpdateAsync(page.First(), It.IsAny<CancellationToken>())).ReturnsAsync(page.First());
 
-            var response = await this.client.PutAsJsonAsync("content/1", saveContent).ConfigureAwait(false);
+            var response = await this.client.PutAsJsonAsync("page/1", savePage).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(ContentType.RestfulJson, response.Content.Headers.ContentType?.MediaType);
-            var contentViewModel = await response.Content.ReadAsAsync<Content>(this.formatters).ConfigureAwait(false);
-            Assert.Equal(contentViewModel.ContentId, content.First().ContentId);
+            var pageViewModel = await response.Content.ReadAsAsync<Page>(this.formatters).ConfigureAwait(false);
+            Assert.Equal(pageViewModel.PageId, page.First().PageId);
         }
 
         [Fact]
-        public async Task PutContent_ContentNotFound_Returns404NotFoundAsync()
+        public async Task PutPage_PageNotFound_Returns404NotFoundAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
-                ContentId = 999,
+                PageId = 999,
             };
-            var saveContent = new SaveContent()
+            var savePage = new SavePage()
             {
                 PageId = 1,
-                BookId = 1,
+                Name = "x",
+                Description = "x",
             };
-            var content = new List<Models.Content>();
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
+            var page = new List<Models.Page>();
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
 
-            var response = await this.client.PutAsJsonAsync("content/999", saveContent).ConfigureAwait(false);
+            var response = await this.client.PutAsJsonAsync("page/999", savePage).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             var problemDetails = await response.Content.ReadAsAsync<ProblemDetails>(this.formatters).ConfigureAwait(false);
@@ -374,9 +372,9 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task PutContent_Invalid_Returns400BadRequestAsync()
+        public async Task PutPage_Invalid_Returns400BadRequestAsync()
         {
-            var response = await this.client.PutAsJsonAsync("content/1", new SaveContent()).ConfigureAwait(false);
+            var response = await this.client.PutAsJsonAsync("page/1", new SavePage()).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             var problemDetails = await response.Content.ReadAsAsync<ProblemDetails>(this.formatters).ConfigureAwait(false);
@@ -384,21 +382,21 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task PatchContent_ContentNotFound_Returns404NotFoundAsync()
+        public async Task PatchPage_PageNotFound_Returns404NotFoundAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
-                ContentId = 999,
+                PageId = 999,
             };
-            var content = new List<Models.Content>();
-            var patch = new JsonPatchDocument<SaveContent>();
-            patch.Remove(x => x.Value);
+            var page = new List<Models.Page>();
+            var patch = new JsonPatchDocument<SavePage>();
+            patch.Remove(x => x.Name);
             var json = JsonConvert.SerializeObject(patch);
             using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
 
             var response = await this.client
-                .PatchAsync(new Uri("content/999", UriKind.Relative), strcontent)
+                .PatchAsync(new Uri("page/999", UriKind.Relative), strcontent)
                 .ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -407,71 +405,61 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task PatchContent_InvalidContent_Returns400BadRequestAsync()
+        public async Task PatchPage_InvalidPage_Returns400BadRequestAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
-                ContentId = 1,
+                PageId = 1,
             };
-            var content = new List<Models.Content>
+            var page = new List<Models.Page>
             {
-                new Models.Content { ContentId = 1 },
+                new Models.Page { PageId = 1 },
             };
-            var patch = new JsonPatchDocument<SaveContent>();
-            patch.Remove(x => x.Value);
+            var patch = new JsonPatchDocument<SavePage>();
+            patch.Remove(x => x.Name);
             var json = JsonConvert.SerializeObject(patch);
             using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
 
             var response = await this.client
-                .PatchAsync(new Uri("content/1", UriKind.Relative), strcontent)
+                .PatchAsync(new Uri("page/1", UriKind.Relative), strcontent)
                 .ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
-        public async Task PatchContent_ValidContent_Returns200OkAsync()
+        public async Task PatchPage_ValidPage_Returns200OkAsync()
         {
-            var filters = new Models.ContentOptionFilter
+            var filters = new Models.PageOptionFilter
             {
-                ContentId = 1,
+                PageId = 1,
             };
-            var patch = new JsonPatchDocument<SaveContent>();
-            patch.Add(x => x.Value, "Y");
+            var patch = new JsonPatchDocument<SavePage>();
+            patch.Add(x => x.Name, "x");
             var json = JsonConvert.SerializeObject(patch);
             using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            var content = new List<Models.Content> { new Models.Content() { ContentId = 1, PageId = 1, BookId = 1, Value = "X" } };
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
+            var page = new List<Models.Page> { new Models.Page() { PageId = 1, Name = "x", Description = "x" } };
+            this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
             this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
-            this.ContentRepositoryMock.Setup(x => x.UpdateAsync(content.First(), It.IsAny<CancellationToken>())).ReturnsAsync(content.First());
+            this.PageRepositoryMock.Setup(x => x.UpdateAsync(page.First(), It.IsAny<CancellationToken>())).ReturnsAsync(page.First());
 
             var response = await this.client
-                .PatchAsync(new Uri("content/1", UriKind.Relative), strcontent)
+                .PatchAsync(new Uri("page/1", UriKind.Relative), strcontent)
                 .ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var contentViewModel = await response.Content.ReadAsAsync<Content>(this.formatters).ConfigureAwait(false);
-            Assert.Equal("Y", contentViewModel.Value);
+            var pageViewModel = await response.Content.ReadAsAsync<Page>(this.formatters).ConfigureAwait(false);
+            Assert.Equal("x", pageViewModel.Name);
         }
 
-        private static string AddQueryString(string uriString, Models.ContentOptionFilter filters)
+        private static string AddQueryString(string uriString, Models.PageOptionFilter filters)
         {
             var provider = CultureInfo.InvariantCulture;
-
-            if (filters.ContentId.HasValue)
-            {
-                uriString = QueryHelpers.AddQueryString(uriString, $"ContentId", filters.ContentId.Value.ToString(provider));
-            }
 
             if (filters.PageId.HasValue)
             {
                 uriString = QueryHelpers.AddQueryString(uriString, $"PageId", filters.PageId.Value.ToString(provider));
-            }
-
-            if (filters.BookId.HasValue)
-            {
-                uriString = QueryHelpers.AddQueryString(uriString, $"BookId", filters.BookId.Value.ToString(provider));
             }
 
             return uriString;

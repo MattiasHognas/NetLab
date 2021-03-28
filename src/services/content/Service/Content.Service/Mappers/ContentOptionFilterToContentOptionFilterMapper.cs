@@ -26,9 +26,9 @@ namespace Content.Service.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            destination.PageId = source.PageId;
             destination.ContentId = source.ContentId;
-            destination.WorkspaceId = source.WorkspaceId;
+            destination.PageId = source.PageId;
+            destination.BookId = source.BookId;
         }
     }
 }

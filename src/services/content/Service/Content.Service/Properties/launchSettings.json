@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:44300/",
+      "applicationUrl": "http://localhost:45200/",
       "sslPort": 0
     }
   },
@@ -21,9 +21,9 @@
     "WSL 2": {
       "commandName": "WSL2",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:5000",
+      "launchUrl": "http://localhost:5200",
       "environmentVariables": {
-        "ASPNETCORE_URLS": "http://localhost:5000",
+        "ASPNETCORE_URLS": "http://localhost:5200",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "distributionName": ""
@@ -31,9 +31,9 @@
     "WSL 2 Production": {
       "commandName": "WSL2",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:5000",
+      "launchUrl": "http://localhost:5200",
       "environmentVariables": {
-        "ASPNETCORE_URLS": "http://localhost:5000",
+        "ASPNETCORE_URLS": "http://localhost:5200",
         "ASPNETCORE_ENVIRONMENT": "Production"
       },
       "distributionName": ""
@@ -77,7 +77,7 @@
       "dotnetRunMessages": "true",
       "launchBrowser": true,
       "launchUrl": "",
-      "applicationUrl": "http://localhost:5000",
+      "applicationUrl": "http://localhost:5200",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -87,7 +87,7 @@
       "dotnetRunMessages": "true",
       "launchBrowser": true,
       "launchUrl": "",
-      "applicationUrl": "http://localhost:5000",
+      "applicationUrl": "http://localhost:5200",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
       }

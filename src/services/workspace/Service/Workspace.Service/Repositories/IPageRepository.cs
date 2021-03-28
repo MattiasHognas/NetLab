@@ -6,33 +6,33 @@ namespace Workspace.Service.Repositories
     using Workspace.Service.Models;
 
     /// <summary>
-    /// Workspace repository.
+    /// Page repository.
     /// </summary>
-    public interface IWorkspaceRepository
+    public interface IPageRepository
     {
         /// <summary>
         /// Add async.
         /// </summary>
-        /// <param name="workspace">The workspace.</param>
+        /// <param name="page">The page.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A workspace.</returns>
-        Task<Workspace> AddAsync(Workspace workspace, CancellationToken cancellationToken);
+        /// <returns>A page.</returns>
+        Task<Page> AddAsync(Page page, CancellationToken cancellationToken);
 
         /// <summary>
         /// Delete async.
         /// </summary>
-        /// <param name="workspace">The workspace.</param>
+        /// <param name="page">The page.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A completed task.</returns>
-        Task DeleteAsync(Workspace workspace, CancellationToken cancellationToken);
+        Task DeleteAsync(Page page, CancellationToken cancellationToken);
 
         /// <summary>
         /// Get async.
         /// </summary>
-        /// <param name="workspaceOptionFilter">The workspace option filter.</param>
+        /// <param name="pageOptionFilter">The page option filter.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A list of workspace.</returns>
-        Task<List<Workspace>> GetAsync(WorkspaceOptionFilter workspaceOptionFilter, CancellationToken cancellationToken);
+        /// <returns>A list of page.</returns>
+        Task<List<Page>> GetAsync(PageOptionFilter pageOptionFilter, CancellationToken cancellationToken);
 
         /// <summary>
         /// Get total count async.
@@ -44,9 +44,9 @@ namespace Workspace.Service.Repositories
         /// <summary>
         /// Update async.
         /// </summary>
-        /// <param name="workspace">The workspace.</param>
+        /// <param name="page">The page.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A workspace.</returns>
-        Task<Workspace> UpdateAsync(Workspace workspace, CancellationToken cancellationToken);
+        /// <returns>A page.</returns>
+        Task<Page> UpdateAsync(Page page, CancellationToken cancellationToken);
     }
 }

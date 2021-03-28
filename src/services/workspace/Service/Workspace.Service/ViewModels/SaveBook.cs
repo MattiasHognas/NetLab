@@ -3,26 +3,24 @@ namespace Workspace.Service.ViewModels
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
-    /// A name and description of workspace.
+    /// The book save viewmodel.
     /// </summary>
-    public class SaveWorkspace
+    public class SaveBook
     {
         /// <summary>
-        /// Gets or sets the workspace id of the workspace.
+        /// Gets or sets the book id.
         /// </summary>
         [Range(1, int.MaxValue)]
-        public int WorkspaceId { get; set; } = default!;
+        public int BookId { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the name of the workspace.
+        /// Gets or sets the name.
         /// </summary>
-        [Required]
         public string Name { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the description of the workspace.
+        /// Gets or sets the description.
         /// </summary>
-        [Required]
         public string Description { get; set; } = default!;
     }
 }

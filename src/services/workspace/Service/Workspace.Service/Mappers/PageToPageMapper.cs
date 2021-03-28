@@ -8,19 +8,19 @@ namespace Workspace.Service.Mappers
     using Workspace.Service.ViewModels;
 
     /// <summary>
-    /// Mapper for workspace viewmodel to workspace model.
+    /// Mapper for page viewmodel to page model.
     /// </summary>
-    public class WorkspaceToWorkspaceMapper : IMapper<Models.Workspace, Workspace>
+    public class PageToPageMapper : IMapper<Models.Page, Page>
     {
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly LinkGenerator linkGenerator;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WorkspaceToWorkspaceMapper"/> class.
+        /// Initializes a new instance of the <see cref="PageToPageMapper"/> class.
         /// </summary>
         /// <param name="httpContextAccessor">The http context accessor.</param>
         /// <param name="linkGenerator">The link generator.</param>
-        public WorkspaceToWorkspaceMapper(
+        public PageToPageMapper(
             IHttpContextAccessor httpContextAccessor,
             LinkGenerator linkGenerator)
         {
@@ -29,11 +29,11 @@ namespace Workspace.Service.Mappers
         }
 
         /// <summary>
-        /// Map workspace viewmodel to workspace model.
+        /// Map page viewmodel to page model.
         /// </summary>
-        /// <param name="source">The workspace model.</param>
-        /// <param name="destination">The workspace viewmodel.</param>
-        public void Map(Models.Workspace source, Workspace destination)
+        /// <param name="source">The page model.</param>
+        /// <param name="destination">The page viewmodel.</param>
+        public void Map(Models.Page source, Page destination)
         {
             if (source is null)
             {
@@ -45,13 +45,14 @@ namespace Workspace.Service.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            destination.WorkspaceId = source.WorkspaceId;
+            destination.PageId = source.PageId;
+            destination.BookId = source.BookId;
             destination.Name = source.Name;
             destination.Description = source.Description;
             destination.Url = new Uri(this.linkGenerator.GetUriByRouteValues(
                 this.httpContextAccessor.HttpContext!,
-                WorkspaceControllerRoute.GetWorkspace,
-                new { source.WorkspaceId })!);
+                PageControllerRoute.GetPage,
+                new { source.PageId })!);
         }
     }
 }

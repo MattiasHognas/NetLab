@@ -18,36 +18,27 @@ namespace Content.Service.Repositories
             {
                 ContentId = 1,
                 PageId = 1,
-                WorkspaceId = 1,
+                BookId = 1,
                 Created = DateTimeOffset.UtcNow.AddDays(-8),
-                X1 = 1,
-                X2 = 2,
-                Y1 = 1,
-                Y2 = 2,
+                Value = "X",
                 Modified = DateTimeOffset.UtcNow.AddDays(-8),
             },
             new Content()
             {
                 ContentId = 2,
                 PageId = 1,
-                WorkspaceId = 1,
+                BookId = 1,
                 Created = DateTimeOffset.UtcNow.AddDays(-8),
-                X1 = 2,
-                X2 = 3,
-                Y1 = 2,
-                Y2 = 3,
+                Value = "X",
                 Modified = DateTimeOffset.UtcNow.AddDays(-8),
             },
             new Content()
             {
                 ContentId = 3,
                 PageId = 1,
-                WorkspaceId = 1,
+                BookId = 1,
                 Created = DateTimeOffset.UtcNow.AddDays(-8),
-                X1 = 3,
-                X2 = 4,
-                Y1 = 3,
-                Y2 = 4,
+                Value = "X",
                 Modified = DateTimeOffset.UtcNow.AddDays(-8),
             },
         };
@@ -99,7 +90,7 @@ namespace Content.Service.Repositories
                 .OrderBy(x => x.Created)
                 .If(contentOptionFilter.ContentId.HasValue, x => x.Where(y => y.ContentId == contentOptionFilter.ContentId))
                 .If(contentOptionFilter.PageId.HasValue, x => x.Where(y => y.PageId == contentOptionFilter.PageId))
-                .If(contentOptionFilter.WorkspaceId.HasValue, x => x.Where(y => y.WorkspaceId == contentOptionFilter.WorkspaceId))
+                .If(contentOptionFilter.BookId.HasValue, x => x.Where(y => y.BookId == contentOptionFilter.BookId))
                 .ToList());
 
         /// <summary>
@@ -123,11 +114,8 @@ namespace Content.Service.Repositories
             }
 
             var existingContent = Content.First(x => x.ContentId == content.ContentId);
-            // existingContent.SceneId = content.SceneId;
-            existingContent.X1 = content.X1;
-            existingContent.X2 = content.X2;
-            existingContent.Y1 = content.Y1;
-            existingContent.Y2 = content.Y2;
+            // existingContent.BookId = content.BookId;
+            existingContent.Value = content.Value;
             // existingContent.UserId = content.UserId;
             return Task.FromResult(content);
         }

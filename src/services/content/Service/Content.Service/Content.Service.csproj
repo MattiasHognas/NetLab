@@ -15,11 +15,11 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <Authors>Project Author</Authors>
-    <Company>Project Author</Company>
-    <Product>Project Title</Product>
-    <Description>Project Description</Description>
-    <Copyright>Copyright © Project Author. All rights Reserved</Copyright>
+    <Authors>Mattias Hognas</Authors>
+    <Company>Mattias Hognas</Company>
+    <Product>Content Service</Product>
+    <Description>Content Service</Description>
+    <Copyright>Copyright © Mattias Hognas. All rights Reserved</Copyright>
   </PropertyGroup>
 
   <ItemGroup Label="Files">
@@ -34,7 +34,6 @@
     <PackageReference Include="Boxed.Mapping" Version="5.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.9.60" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="4.0.0" />
@@ -43,8 +42,8 @@
     <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
     <PackageReference Include="Serilog.Exceptions" Version="6.1.0" />
     <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.333" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.1" />
   </ItemGroup>
 
 </Project>

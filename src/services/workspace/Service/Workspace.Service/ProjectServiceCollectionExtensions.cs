@@ -25,11 +25,16 @@ namespace Workspace.Service
         /// <returns>The services with command services added.</returns>
         public static IServiceCollection AddProjectCommands(this IServiceCollection services) =>
             services
-                .AddSingleton<DeleteWorkspaceCommand>()
-                .AddSingleton<GetWorkspaceCommand>()
-                .AddSingleton<PatchWorkspaceCommand>()
-                .AddSingleton<PostWorkspaceCommand>()
-                .AddSingleton<PutWorkspaceCommand>();
+                .AddSingleton<DeleteBookCommand>()
+                .AddSingleton<GetBookCommand>()
+                .AddSingleton<PatchBookCommand>()
+                .AddSingleton<PostBookCommand>()
+                .AddSingleton<PutBookCommand>()
+                .AddSingleton<DeletePageCommand>()
+                .AddSingleton<GetPageCommand>()
+                .AddSingleton<PatchPageCommand>()
+                .AddSingleton<PostPageCommand>()
+                .AddSingleton<PutPageCommand>();
 
         /// <summary>
         /// Adds mapping middlewares to the service collection.
@@ -38,10 +43,14 @@ namespace Workspace.Service
         /// <returns>The services with mapping services added.</returns>
         public static IServiceCollection AddProjectMappers(this IServiceCollection services) =>
             services
-                .AddSingleton<IMapper<Models.Workspace, Workspace>, WorkspaceToWorkspaceMapper>()
-                .AddSingleton<IMapper<Models.Workspace, SaveWorkspace>, WorkspaceToSaveWorkspaceMapper>()
-                .AddSingleton<IMapper<SaveWorkspace, Models.Workspace>, WorkspaceToSaveWorkspaceMapper>()
-                .AddSingleton<IMapper<WorkspaceOptionFilter, Models.WorkspaceOptionFilter>, WorkspaceOptionFilterToWorkspaceOptionFilterMapper>();
+                .AddSingleton<IMapper<Models.Book, Book>, BookToBookMapper>()
+                .AddSingleton<IMapper<Models.Book, SaveBook>, BookToSaveBookMapper>()
+                .AddSingleton<IMapper<SaveBook, Models.Book>, BookToSaveBookMapper>()
+                .AddSingleton<IMapper<BookOptionFilter, Models.BookOptionFilter>, BookOptionFilterToBookOptionFilterMapper>()
+                .AddSingleton<IMapper<Models.Page, Page>, PageToPageMapper>()
+                .AddSingleton<IMapper<Models.Page, SavePage>, PageToSavePageMapper>()
+                .AddSingleton<IMapper<SavePage, Models.Page>, PageToSavePageMapper>()
+                .AddSingleton<IMapper<PageOptionFilter, Models.PageOptionFilter>, PageOptionFilterToPageOptionFilterMapper>();
 
         /// <summary>
         /// Adds repository middlewares to the service collection.
@@ -50,7 +59,8 @@ namespace Workspace.Service
         /// <returns>The services with repository services added.</returns>
         public static IServiceCollection AddProjectRepositories(this IServiceCollection services) =>
             services
-                .AddSingleton<IWorkspaceRepository, WorkspaceRepository>();
+                .AddSingleton<IBookRepository, BookRepository>()
+                .AddSingleton<IPageRepository, PageRepository>();
 
         /// <summary>
         /// Adds service middlewares to the service collection.

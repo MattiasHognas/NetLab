@@ -6,8 +6,13 @@ namespace Workspace.Service.Constants
     public static class ControllerName
     {
         /// <summary>
-        /// The workspace controller name.
+        /// The book controller name.
         /// </summary>
-        public const string Workspace = nameof(Workspace);
+        public const string Book = nameof(Book);
+
+        /// <summary>
+        /// The page controller name.
+        /// </summary>
+        public const string Page = nameof(Page);
     }
 }

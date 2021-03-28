@@ -6,25 +6,25 @@ namespace Workspace.Service.Mappers
     using Workspace.Service.ViewModels;
 
     /// <summary>
-    /// Mapper for workspace viewmodel to save workspace model.
+    /// Mapper for page viewmodel to save page model.
     /// </summary>
-    public class WorkspaceToSaveWorkspaceMapper : IMapper<Models.Workspace, SaveWorkspace>, IMapper<SaveWorkspace, Models.Workspace>
+    public class PageToSavePageMapper : IMapper<Models.Page, SavePage>, IMapper<SavePage, Models.Page>
     {
         private readonly IClockService clockService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WorkspaceToSaveWorkspaceMapper"/> class.
+        /// Initializes a new instance of the <see cref="PageToSavePageMapper"/> class.
         /// </summary>
         /// <param name="clockService">The clock service.</param>
-        public WorkspaceToSaveWorkspaceMapper(IClockService clockService) =>
+        public PageToSavePageMapper(IClockService clockService) =>
             this.clockService = clockService;
 
         /// <summary>
-        /// Map workspace model to save workspace viewmodel.
+        /// Map page model to save page viewmodel.
         /// </summary>
-        /// <param name="source">The workspace model.</param>
-        /// <param name="destination">The save workspace viewmodel.</param>
-        public void Map(Models.Workspace source, SaveWorkspace destination)
+        /// <param name="source">The page model.</param>
+        /// <param name="destination">The save page viewmodel.</param>
+        public void Map(Models.Page source, SavePage destination)
         {
             if (source is null)
             {
@@ -36,17 +36,18 @@ namespace Workspace.Service.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            destination.WorkspaceId = source.WorkspaceId;
+            destination.PageId = source.PageId;
+            destination.BookId = source.BookId;
             destination.Name = source.Name;
             destination.Description = source.Description;
         }
 
         /// <summary>
-        /// Map save workspace viewmodel to workspace model.
+        /// Map save page viewmodel to page model.
         /// </summary>
-        /// <param name="source">The save workspace viewmodel.</param>
-        /// <param name="destination">The workspace model.</param>
-        public void Map(SaveWorkspace source, Models.Workspace destination)
+        /// <param name="source">The save page viewmodel.</param>
+        /// <param name="destination">The page model.</param>
+        public void Map(SavePage source, Models.Page destination)
         {
             if (source is null)
             {
@@ -65,7 +66,8 @@ namespace Workspace.Service.Mappers
                 destination.Created = now;
             }
 
-            destination.WorkspaceId = source.WorkspaceId;
+            destination.PageId = source.PageId;
+            destination.BookId = source.BookId;
             destination.Name = source.Name;
             destination.Description = source.Description;
             destination.Modified = now;

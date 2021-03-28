@@ -1,7 +1,7 @@
 namespace Content.Service.ViewModels
 {
     /// <summary>
-    /// The content option filter.
+    /// The content option filter viewmodel.
     /// </summary>
     public class ContentOptionFilter
     {
@@ -16,8 +16,8 @@ namespace Content.Service.ViewModels
         public int? PageId { get; set; }
 
         /// <summary>
-        /// Gets or sets the workspace id which is filtered.
+        /// Gets or sets the book id which is filtered.
         /// </summary>
-        public int? WorkspaceId { get; set; }
+        public int? BookId { get; set; }
     }
 }

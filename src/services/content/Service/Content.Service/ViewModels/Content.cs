@@ -3,44 +3,29 @@ namespace Content.Service.ViewModels
     using System;
 
     /// <summary>
-    /// A name and description of content.
+    /// The content viewmodel.
     /// </summary>
     public class Content
     {
         /// <summary>
-        /// Gets or sets the content unique identifier.
+        /// Gets or sets the content id.
         /// </summary>
         public int ContentId { get; set; }
 
         /// <summary>
-        /// Gets or sets the page id of the content.
+        /// Gets or sets the page id.
         /// </summary>
         public int PageId { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the workspace id of the content.
+        /// Gets or sets the book id.
         /// </summary>
-        public int WorkspaceId { get; set; } = default!;
+        public int BookId { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the X1 of the content.
+        /// Gets or sets the value.
         /// </summary>
-        public int X1 { get; set; } = default!;
-
-        /// <summary>
-        /// Gets or sets the X2 of the content.
-        /// </summary>
-        public int X2 { get; set; } = default!;
-
-        /// <summary>
-        /// Gets or sets the Y1 of the content.
-        /// </summary>
-        public int Y1 { get; set; } = default!;
-
-        /// <summary>
-        /// Gets or sets the Y2 of the content.
-        /// </summary>
-        public int Y2 { get; set; } = default!;
+        public string Value { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the URL used to retrieve the resource conforming to REST'ful JSON http://restfuljson.org/.

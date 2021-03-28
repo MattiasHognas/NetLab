@@ -1,11 +1,11 @@
-namespace Content.Service.ViewModels
+namespace Workspace.Service.ViewModels
 {
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
-    /// The save content viewmodel.
+    /// The page save viewmodel.
     /// </summary>
-    public class SaveContent
+    public class SavePage
     {
         /// <summary>
         /// Gets or sets the page id.
@@ -20,9 +20,13 @@ namespace Content.Service.ViewModels
         public int BookId { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the value.
+        /// Gets or sets the name.
         /// </summary>
-        [Required]
-        public string Value { get; set; } = default!;
+        public string Name { get; set; } = default!;
+
+        /// <summary>
+        /// Gets or sets the description.
+        /// </summary>
+        public string Description { get; set; } = default!;
     }
 }

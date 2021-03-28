@@ -28,11 +28,13 @@ namespace Workspace.Service.IntegrationTest
 
         public ApplicationOptions ApplicationOptions { get; private set; } = default!;
 
-        public Mock<IWorkspaceRepository> WorkspaceRepositoryMock { get; } = new Mock<IWorkspaceRepository>(MockBehavior.Strict);
+        public Mock<IBookRepository> BookRepositoryMock { get; } = new Mock<IBookRepository>(MockBehavior.Strict);
+
+        public Mock<IPageRepository> PageRepositoryMock { get; } = new Mock<IPageRepository>(MockBehavior.Strict);
 
         public Mock<IClockService> ClockServiceMock { get; } = new Mock<IClockService>(MockBehavior.Strict);
 
-        public void VerifyAllMocks() => Mock.VerifyAll(this.WorkspaceRepositoryMock, this.ClockServiceMock);
+        public void VerifyAllMocks() => Mock.VerifyAll(this.BookRepositoryMock, this.PageRepositoryMock, this.ClockServiceMock);
 
         protected override void ConfigureClient(HttpClient client)
         {
@@ -52,7 +54,8 @@ namespace Workspace.Service.IntegrationTest
 
         protected virtual void ConfigureServices(IServiceCollection services) =>
             services
-                .AddSingleton(this.WorkspaceRepositoryMock.Object)
+                .AddSingleton(this.BookRepositoryMock.Object)
+                .AddSingleton(this.PageRepositoryMock.Object)
                 .AddSingleton(this.ClockServiceMock.Object);
 
         protected override void Dispose(bool disposing)

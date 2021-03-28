@@ -1,15 +1,10 @@
-namespace Content.Service.Models
+namespace Workspace.Service.ViewModels
 {
     /// <summary>
-    /// The content option filter model.
+    /// The page option filter viewmodel.
     /// </summary>
-    public class ContentOptionFilter
+    public class PageOptionFilter
     {
-        /// <summary>
-        /// Gets or sets the content id which is filtered.
-        /// </summary>
-        public int? ContentId { get; set; }
-
         /// <summary>
         /// Gets or sets the page id which is filtered.
         /// </summary>

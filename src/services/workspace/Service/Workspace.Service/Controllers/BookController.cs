@@ -1,19 +1,19 @@
-namespace Content.Service.Controllers
+namespace Workspace.Service.Controllers
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Content.Service.Commands;
-    using Content.Service.Constants;
-    using Content.Service.ViewModels;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Net.Http.Headers;
     using Swashbuckle.AspNetCore.Annotations;
+    using Workspace.Service.Commands;
+    using Workspace.Service.Constants;
+    using Workspace.Service.ViewModels;
 
     /// <summary>
-    /// Content controller.
+    /// Book controller.
     /// </summary>
     [Route("[controller]")]
     [ApiController]
@@ -21,13 +21,13 @@ namespace Content.Service.Controllers
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
 #pragma warning disable CA1822 // Mark members as static
 #pragma warning disable CA1062 // Validate arguments of public methods
-    public class ContentController : ControllerBase
+    public class BookController : ControllerBase
     {
         /// <summary>
         /// Returns an Allow HTTP header with the allowed HTTP methods.
         /// </summary>
         /// <returns>A 200 OK response.</returns>
-        [HttpOptions(Name = ContentControllerRoute.OptionsContents)]
+        [HttpOptions(Name = BookControllerRoute.OptionsBooks)]
         [SwaggerResponse(StatusCodes.Status200OK, "The allowed HTTP methods.")]
         public IActionResult Options()
         {
@@ -41,14 +41,14 @@ namespace Content.Service.Controllers
         }
 
         /// <summary>
-        /// Returns an Allow HTTP header with the allowed HTTP methods for a content with a specified id.
+        /// Returns an Allow HTTP header with the allowed HTTP methods for a book with a specified id.
         /// </summary>
-        /// <param name="contentId">The content id.</param>
+        /// <param name="bookId">The book id.</param>
         /// <returns>A 200 OK response.</returns>
-        [HttpOptions("{contentId}", Name = ContentControllerRoute.OptionsContent)]
+        [HttpOptions("{bookId}", Name = BookControllerRoute.OptionsBook)]
         [SwaggerResponse(StatusCodes.Status200OK, "The allowed HTTP methods.")]
 #pragma warning disable IDE0060, CA1801 // Remove unused parameter
-        public IActionResult Options(int contentId)
+        public IActionResult Options(int bookId)
 #pragma warning restore IDE0060, CA1801 // Remove unused parameter
         {
             this.HttpContext.Response.Headers.AppendCommaSeparatedValues(
@@ -62,100 +62,100 @@ namespace Content.Service.Controllers
         }
 
         /// <summary>
-        /// Deletes the content with the specified id.
+        /// Deletes the book with the specified id.
         /// </summary>
         /// <param name="command">The action command.</param>
-        /// <param name="contentId">The content id.</param>
+        /// <param name="bookId">The book id.</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 204 No Content response if the content was deleted or a 404 Not Found if a content with the specified
+        /// <returns>A 204 NoContent response if the book was deleted or a 404 Not Found if a book with the specified
         /// id was not found.</returns>
-        [HttpDelete("{contentId}", Name = ContentControllerRoute.DeleteContent)]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "The content with the specified id was deleted.")]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "A content with the specified id was not found.", typeof(ProblemDetails))]
+        [HttpDelete("{bookId}", Name = BookControllerRoute.DeleteBook)]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "The book with the specified id was deleted.")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "A book with the specified id was not found.", typeof(ProblemDetails))]
         public Task<IActionResult> DeleteAsync(
-            [FromServices] DeleteContentCommand command,
-            int contentId,
-            CancellationToken cancellationToken) => command.ExecuteAsync(contentId, cancellationToken);
+            [FromServices] DeleteBookCommand command,
+            int bookId,
+            CancellationToken cancellationToken) => command.ExecuteAsync(bookId, cancellationToken);
 
         /// <summary>
-        /// Gets a list of content.
+        /// Gets a list of book.
         /// </summary>
         /// <param name="command">The action command.</param>
-        /// <param name="contentOptionFilter">The content option filter.</param>
+        /// <param name="bookOptionFilter">The book option filter.</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 200 OK response containing a list of content, a 400 Bad Request if the page request
+        /// <returns>A 200 OK response containing a list of book, a 400 Bad Request if the page request
         /// parameters are invalid.
         /// </returns>
-        [HttpGet(Name = ContentControllerRoute.GetContent)]
-        [HttpHead(Name = ContentControllerRoute.HeadContent)]
-        [SwaggerResponse(StatusCodes.Status200OK, "A list of content.", typeof(List<Content>))]
+        [HttpGet(Name = BookControllerRoute.GetBook)]
+        [HttpHead(Name = BookControllerRoute.HeadBook)]
+        [SwaggerResponse(StatusCodes.Status200OK, "A list of book.", typeof(List<Book>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "The page request parameters are invalid.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "A page with the specified page number was not found.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
         public Task<IActionResult> GetAsync(
-            [FromServices] GetContentCommand command,
-            [FromQuery] ContentOptionFilter contentOptionFilter,
-            CancellationToken cancellationToken) => command.ExecuteAsync(contentOptionFilter, cancellationToken);
+            [FromServices] GetBookCommand command,
+            [FromQuery] BookOptionFilter bookOptionFilter,
+            CancellationToken cancellationToken) => command.ExecuteAsync(bookOptionFilter, cancellationToken);
 
         /// <summary>
-        /// Patches the content with the specified id.
+        /// Patches the book with the specified id.
         /// </summary>
         /// <param name="command">The action command.</param>
-        /// <param name="contentId">The content id.</param>
+        /// <param name="bookId">The book id.</param>
         /// <param name="patch">The patch document. See http://jsonpatch.com.</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 200 OK if the content was patched, a 400 Bad Request if the patch was invalid or a 404 Not Found
-        /// if a content with the specified id was not found.</returns>
-        [HttpPatch("{contentId}", Name = ContentControllerRoute.PatchContent)]
-        [SwaggerResponse(StatusCodes.Status200OK, "The patched content with the specified id.", typeof(Content))]
+        /// <returns>A 200 OK if the book was patched, a 400 Bad Request if the patch was invalid or a 404 Not Found
+        /// if a book with the specified id was not found.</returns>
+        [HttpPatch("{bookId}", Name = BookControllerRoute.PatchBook)]
+        [SwaggerResponse(StatusCodes.Status200OK, "The patched book with the specified id.", typeof(Book))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "The patch document is invalid.", typeof(ProblemDetails))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "A content with the specified id could not be found.", typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "A book with the specified id could not be found.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public Task<IActionResult> PatchAsync(
-            [FromServices] PatchContentCommand command,
-            int contentId,
-            [FromBody] JsonPatchDocument<SaveContent> patch,
-            CancellationToken cancellationToken) => command.ExecuteAsync(contentId, patch, cancellationToken);
+            [FromServices] PatchBookCommand command,
+            int bookId,
+            [FromBody] JsonPatchDocument<SaveBook> patch,
+            CancellationToken cancellationToken) => command.ExecuteAsync(bookId, patch, cancellationToken);
 
         /// <summary>
-        /// Creates a new content.
+        /// Creates a new book.
         /// </summary>
         /// <param name="command">The action command.</param>
-        /// <param name="content">The content to create.</param>
+        /// <param name="book">The book to create.</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 201 Created response containing the newly created content or a 400 Bad Request if the content is
+        /// <returns>A 201 Created response containing the newly created book or a 400 Bad Request if the book is
         /// invalid.</returns>
-        [HttpPost(Name = ContentControllerRoute.PostContent)]
-        [SwaggerResponse(StatusCodes.Status201Created, "The content was created.", typeof(Content))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "The content is invalid.", typeof(ProblemDetails))]
+        [HttpPost(Name = BookControllerRoute.PostBook)]
+        [SwaggerResponse(StatusCodes.Status201Created, "The book was created.", typeof(Book))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "The book is invalid.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public Task<IActionResult> PostAsync(
-            [FromServices] PostContentCommand command,
-            [FromBody] SaveContent content,
-            CancellationToken cancellationToken) => command.ExecuteAsync(content, cancellationToken);
+            [FromServices] PostBookCommand command,
+            [FromBody] SaveBook book,
+            CancellationToken cancellationToken) => command.ExecuteAsync(book, cancellationToken);
 
         /// <summary>
-        /// Updates an existing content with the specified id.
+        /// Updates an existing book with the specified id.
         /// </summary>
         /// <param name="command">The action command.</param>
-        /// <param name="contentId">The content identifier.</param>
-        /// <param name="content">The content to update.</param>
+        /// <param name="bookId">The book identifier.</param>
+        /// <param name="book">The book to update.</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 200 OK response containing the newly updated content, a 400 Bad Request if the content is invalid or a
-        /// or a 404 Not Found if a content with the specified id was not found.</returns>
-        [HttpPut("{contentId}", Name = ContentControllerRoute.PutContent)]
-        [SwaggerResponse(StatusCodes.Status200OK, "The content was updated.", typeof(Content))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "The content is invalid.", typeof(ProblemDetails))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "A content with the specified id could not be found.", typeof(ProblemDetails))]
+        /// <returns>A 200 OK response containing the newly updated book, a 400 Bad Request if the book is invalid or a
+        /// or a 404 Not Found if a book with the specified id was not found.</returns>
+        [HttpPut("{bookId}", Name = BookControllerRoute.PutBook)]
+        [SwaggerResponse(StatusCodes.Status200OK, "The book was updated.", typeof(Book))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "The book is invalid.", typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "A book with the specified id could not be found.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public Task<IActionResult> PutAsync(
-            [FromServices] PutContentCommand command,
-            int contentId,
-            [FromBody] SaveContent content,
-            CancellationToken cancellationToken) => command.ExecuteAsync(contentId, content, cancellationToken);
+            [FromServices] PutBookCommand command,
+            int bookId,
+            [FromBody] SaveBook book,
+            CancellationToken cancellationToken) => command.ExecuteAsync(bookId, book, cancellationToken);
     }
 }
 #pragma warning restore CA1062 // Validate arguments of public methods

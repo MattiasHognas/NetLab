@@ -3,22 +3,27 @@ namespace Workspace.Service.ViewModels
     using System;
 
     /// <summary>
-    /// A name and description of workspace.
+    /// The page viewmodel.
     /// </summary>
-    public class Workspace
+    public class Page
     {
         /// <summary>
-        /// Gets or sets the workspace id of the workspace.
+        /// Gets or sets the page id of the page.
         /// </summary>
-        public int WorkspaceId { get; set; } = default!;
+        public int PageId { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the name of the workspace.
+        /// Gets or sets the book id of the page.
+        /// </summary>
+        public int BookId { get; set; } = default!;
+
+        /// <summary>
+        /// Gets or sets the name of the page.
         /// </summary>
         public string Name { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the description of the workspace.
+        /// Gets or sets the description of the page.
         /// </summary>
         public string Description { get; set; } = default!;
 

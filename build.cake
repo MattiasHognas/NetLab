@@ -1,9 +1,9 @@
-var target = Argument("Target", "Default");
+var target = Argument("Target", "RunAll");
 var configuration =
     HasArgument("Configuration") ? Argument<string>("Configuration") :
     EnvironmentVariable("Configuration") is not null ? EnvironmentVariable("Configuration") :
     "Release";
-//#if (Docker)
+var artefactsDirectory = Directory("./Artefacts");
 var tag =
     HasArgument("Tag") ? Argument<string>("Tag") :
     EnvironmentVariable("Tag") is not null ? EnvironmentVariable("Tag") :
@@ -16,9 +16,6 @@ var push =
     HasArgument("Push") ? Argument<bool>("Push") :
     EnvironmentVariable("Push") is not null ? bool.Parse(EnvironmentVariable("Push")) :
     false;
-//#endif
-
-var artefactsDirectory = Directory("./Artefacts");
 
 Task("Clean")
     .Description("Cleans the artefacts, bin and obj directories.")
@@ -54,7 +51,7 @@ Task("Build")
 
 Task("Test")
     .Description("Runs unit tests and outputs test results to the artefacts directory.")
-    .DoesForEach(GetFiles("./src/services/**/Test/**/*.csproj"), project =>
+    .DoesForEach(GetFiles("./src/services/**/Test/**/*.sln"), project =>
     {
         DotNetCoreTest(
             project.ToString(),
@@ -76,7 +73,7 @@ Task("Test")
 
 Task("Publish")
     .Description("Publishes the solution.")
-    .DoesForEach(GetFiles("./src/services/**/Service/**/*.csproj"), project =>
+    .DoesForEach(GetFiles("./src/services/**/Service/**/*.sln"), project =>
     {
         DotNetCorePublish(
             project.ToString(),
@@ -89,7 +86,39 @@ Task("Publish")
             });
     });
 
-//#if (Docker)
+Task("Run")
+    .Description("Runs all apps and services.")
+    .Does(() =>
+    {
+        DotNetCoreRunInParallel(GetFiles("./src/services/**/Service/**/*.csproj"), "Release");
+    });
+
+public void DotNetCoreRunInParallel(
+    Cake.Core.IO.FilePathCollection projects,
+    string configuration = "Release",
+    int maxDegreeOfParallelism = -1,
+    System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+{
+    var actions = new List<Action>();
+    foreach (var project in projects)
+    {
+        actions.Add(() =>
+            DotNetCoreRun(
+                project.GetDirectory().ToString(),
+                $"-c {configuration}"
+            )
+        );
+    }
+
+    var options = new ParallelOptions
+    {
+        MaxDegreeOfParallelism = maxDegreeOfParallelism,
+        CancellationToken = cancellationToken
+    };
+
+    Parallel.Invoke(options, actions.ToArray());
+}
+
 Task("DockerBuild")
     .Description("Builds a Docker image.")
     .DoesForEach(GetFiles("./src/services/**/Dockerfile"), dockerfile =>
@@ -172,17 +201,20 @@ Task("DockerBuild")
         }
     });
 
-Task("Default")
+Task("BuildDocker")
     .Description("Cleans, restores NuGet packages, builds the solution, runs unit tests and then builds a Docker image.")
     .IsDependentOn("Build")
     .IsDependentOn("Test")
     .IsDependentOn("DockerBuild");
-////#else
-//Task("Default")
-//    .Description("Cleans, restores NuGet packages, builds the solution, runs unit tests and then publishes.")
-//    .IsDependentOn("Build")
-//    .IsDependentOn("Test")
-//    .IsDependentOn("Publish");
-//#endif
+Task("PublishArtifacts")
+   .Description("Cleans, restores NuGet packages, builds the solution, runs unit tests and then publishe artifacts.")
+   .IsDependentOn("Build")
+   .IsDependentOn("Test")
+   .IsDependentOn("Publish");
+Task("RunAll")
+    .Description("Cleans, restores NuGet packages, builds the solution, runs unit tests and then run all.")
+    .IsDependentOn("Build")
+    .IsDependentOn("Test")
+    .IsDependentOn("Run");
 
 RunTarget(target);

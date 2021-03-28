@@ -13,7 +13,7 @@ namespace Workspace.Service.Controllers
     using Workspace.Service.ViewModels;
 
     /// <summary>
-    /// Workspace controller.
+    /// Page controller.
     /// </summary>
     [Route("[controller]")]
     [ApiController]
@@ -21,13 +21,13 @@ namespace Workspace.Service.Controllers
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
 #pragma warning disable CA1822 // Mark members as static
 #pragma warning disable CA1062 // Validate arguments of public methods
-    public class WorkspaceController : ControllerBase
+    public class PageController : ControllerBase
     {
         /// <summary>
         /// Returns an Allow HTTP header with the allowed HTTP methods.
         /// </summary>
         /// <returns>A 200 OK response.</returns>
-        [HttpOptions(Name = WorkspaceControllerRoute.OptionsWorkspaces)]
+        [HttpOptions(Name = PageControllerRoute.OptionsPages)]
         [SwaggerResponse(StatusCodes.Status200OK, "The allowed HTTP methods.")]
         public IActionResult Options()
         {
@@ -41,14 +41,14 @@ namespace Workspace.Service.Controllers
         }
 
         /// <summary>
-        /// Returns an Allow HTTP header with the allowed HTTP methods for a workspace with a specified id.
+        /// Returns an Allow HTTP header with the allowed HTTP methods for a page with a specified id.
         /// </summary>
-        /// <param name="workspaceId">The workspace id.</param>
+        /// <param name="pageId">The page id.</param>
         /// <returns>A 200 OK response.</returns>
-        [HttpOptions("{workspaceId}", Name = WorkspaceControllerRoute.OptionsWorkspace)]
+        [HttpOptions("{pageId}", Name = PageControllerRoute.OptionsPage)]
         [SwaggerResponse(StatusCodes.Status200OK, "The allowed HTTP methods.")]
 #pragma warning disable IDE0060, CA1801 // Remove unused parameter
-        public IActionResult Options(int workspaceId)
+        public IActionResult Options(int pageId)
 #pragma warning restore IDE0060, CA1801 // Remove unused parameter
         {
             this.HttpContext.Response.Headers.AppendCommaSeparatedValues(
@@ -62,100 +62,100 @@ namespace Workspace.Service.Controllers
         }
 
         /// <summary>
-        /// Deletes the workspace with the specified id.
+        /// Deletes the page with the specified id.
         /// </summary>
         /// <param name="command">The action command.</param>
-        /// <param name="workspaceId">The workspace id.</param>
+        /// <param name="pageId">The page id.</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 204 No Workspace response if the workspace was deleted or a 404 Not Found if a workspace with the specified
+        /// <returns>A 204 NoContent response if the page was deleted or a 404 Not Found if a page with the specified
         /// id was not found.</returns>
-        [HttpDelete("{workspaceId}", Name = WorkspaceControllerRoute.DeleteWorkspace)]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "The workspace with the specified id was deleted.")]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "A workspace with the specified id was not found.", typeof(ProblemDetails))]
+        [HttpDelete("{pageId}", Name = PageControllerRoute.DeletePage)]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "The page with the specified id was deleted.")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "A page with the specified id was not found.", typeof(ProblemDetails))]
         public Task<IActionResult> DeleteAsync(
-            [FromServices] DeleteWorkspaceCommand command,
-            int workspaceId,
-            CancellationToken cancellationToken) => command.ExecuteAsync(workspaceId, cancellationToken);
+            [FromServices] DeletePageCommand command,
+            int pageId,
+            CancellationToken cancellationToken) => command.ExecuteAsync(pageId, cancellationToken);
 
         /// <summary>
-        /// Gets a list of workspace.
+        /// Gets a list of page.
         /// </summary>
         /// <param name="command">The action command.</param>
-        /// <param name="workspaceOptionFilter">The workspace option filter.</param>
+        /// <param name="pageOptionFilter">The page option filter.</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 200 OK response containing a list of workspace, a 400 Bad Request if the page request
+        /// <returns>A 200 OK response containing a list of page, a 400 Bad Request if the page request
         /// parameters are invalid.
         /// </returns>
-        [HttpGet("", Name = WorkspaceControllerRoute.GetWorkspace)]
-        [HttpHead("", Name = WorkspaceControllerRoute.HeadWorkspace)]
-        [SwaggerResponse(StatusCodes.Status200OK, "A list of workspace.", typeof(List<Workspace>))]
+        [HttpGet(Name = PageControllerRoute.GetPage)]
+        [HttpHead(Name = PageControllerRoute.HeadPage)]
+        [SwaggerResponse(StatusCodes.Status200OK, "A list of page.", typeof(List<Page>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "The page request parameters are invalid.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "A page with the specified page number was not found.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
         public Task<IActionResult> GetAsync(
-            [FromServices] GetWorkspaceCommand command,
-            [FromQuery] WorkspaceOptionFilter workspaceOptionFilter,
-            CancellationToken cancellationToken) => command.ExecuteAsync(workspaceOptionFilter, cancellationToken);
+            [FromServices] GetPageCommand command,
+            [FromQuery] PageOptionFilter pageOptionFilter,
+            CancellationToken cancellationToken) => command.ExecuteAsync(pageOptionFilter, cancellationToken);
 
         /// <summary>
-        /// Patches the workspace with the specified id.
+        /// Patches the page with the specified id.
         /// </summary>
         /// <param name="command">The action command.</param>
-        /// <param name="workspaceId">The workspace id.</param>
+        /// <param name="pageId">The page id.</param>
         /// <param name="patch">The patch document. See http://jsonpatch.com.</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 200 OK if the workspace was patched, a 400 Bad Request if the patch was invalid or a 404 Not Found
-        /// if a workspace with the specified id was not found.</returns>
-        [HttpPatch("{workspaceId}", Name = WorkspaceControllerRoute.PatchWorkspace)]
-        [SwaggerResponse(StatusCodes.Status200OK, "The patched workspace with the specified id.", typeof(Workspace))]
+        /// <returns>A 200 OK if the page was patched, a 400 Bad Request if the patch was invalid or a 404 Not Found
+        /// if a page with the specified id was not found.</returns>
+        [HttpPatch("{pageId}", Name = PageControllerRoute.PatchPage)]
+        [SwaggerResponse(StatusCodes.Status200OK, "The patched page with the specified id.", typeof(Page))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "The patch document is invalid.", typeof(ProblemDetails))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "A workspace with the specified id could not be found.", typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "A page with the specified id could not be found.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public Task<IActionResult> PatchAsync(
-            [FromServices] PatchWorkspaceCommand command,
-            int workspaceId,
-            [FromBody] JsonPatchDocument<SaveWorkspace> patch,
-            CancellationToken cancellationToken) => command.ExecuteAsync(workspaceId, patch, cancellationToken);
+            [FromServices] PatchPageCommand command,
+            int pageId,
+            [FromBody] JsonPatchDocument<SavePage> patch,
+            CancellationToken cancellationToken) => command.ExecuteAsync(pageId, patch, cancellationToken);
 
         /// <summary>
-        /// Creates a new workspace.
+        /// Creates a new page.
         /// </summary>
         /// <param name="command">The action command.</param>
-        /// <param name="workspace">The workspace to create.</param>
+        /// <param name="page">The page to create.</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 201 Created response containing the newly created workspace or a 400 Bad Request if the workspace is
+        /// <returns>A 201 Created response containing the newly created page or a 400 Bad Request if the page is
         /// invalid.</returns>
-        [HttpPost("", Name = WorkspaceControllerRoute.PostWorkspace)]
-        [SwaggerResponse(StatusCodes.Status201Created, "The workspace was created.", typeof(Workspace))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "The workspace is invalid.", typeof(ProblemDetails))]
+        [HttpPost(Name = PageControllerRoute.PostPage)]
+        [SwaggerResponse(StatusCodes.Status201Created, "The page was created.", typeof(Page))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "The page is invalid.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public Task<IActionResult> PostAsync(
-            [FromServices] PostWorkspaceCommand command,
-            [FromBody] SaveWorkspace workspace,
-            CancellationToken cancellationToken) => command.ExecuteAsync(workspace, cancellationToken);
+            [FromServices] PostPageCommand command,
+            [FromBody] SavePage page,
+            CancellationToken cancellationToken) => command.ExecuteAsync(page, cancellationToken);
 
         /// <summary>
-        /// Updates an existing workspace with the specified id.
+        /// Updates an existing page with the specified id.
         /// </summary>
         /// <param name="command">The action command.</param>
-        /// <param name="workspaceId">The workspace identifier.</param>
-        /// <param name="workspace">The workspace to update.</param>
+        /// <param name="pageId">The page identifier.</param>
+        /// <param name="page">The page to update.</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 200 OK response containing the newly updated workspace, a 400 Bad Request if the workspace is invalid or a
-        /// or a 404 Not Found if a workspace with the specified id was not found.</returns>
-        [HttpPut("{workspaceId}", Name = WorkspaceControllerRoute.PutWorkspace)]
-        [SwaggerResponse(StatusCodes.Status200OK, "The workspace was updated.", typeof(Workspace))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "The workspace is invalid.", typeof(ProblemDetails))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "A workspace with the specified id could not be found.", typeof(ProblemDetails))]
+        /// <returns>A 200 OK response containing the newly updated page, a 400 Bad Request if the page is invalid or a
+        /// or a 404 Not Found if a page with the specified id was not found.</returns>
+        [HttpPut("{pageId}", Name = PageControllerRoute.PutPage)]
+        [SwaggerResponse(StatusCodes.Status200OK, "The page was updated.", typeof(Page))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "The page is invalid.", typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "A page with the specified id could not be found.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public Task<IActionResult> PutAsync(
-            [FromServices] PutWorkspaceCommand command,
-            int workspaceId,
-            [FromBody] SaveWorkspace workspace,
-            CancellationToken cancellationToken) => command.ExecuteAsync(workspaceId, workspace, cancellationToken);
+            [FromServices] PutPageCommand command,
+            int pageId,
+            [FromBody] SavePage page,
+            CancellationToken cancellationToken) => command.ExecuteAsync(pageId, page, cancellationToken);
     }
 }
 #pragma warning restore CA1062 // Validate arguments of public methods

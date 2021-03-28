@@ -1,30 +1,30 @@
-namespace Content.Service.Mappers
+namespace Workspace.Service.Mappers
 {
     using System;
     using Boxed.Mapping;
-    using Content.Service.Services;
-    using Content.Service.ViewModels;
+    using Workspace.Service.Services;
+    using Workspace.Service.ViewModels;
 
     /// <summary>
-    /// Mapper for content viewmodel to save content model.
+    /// Mapper for book viewmodel to save book model.
     /// </summary>
-    public class ContentToSaveContentMapper : IMapper<Models.Content, SaveContent>, IMapper<SaveContent, Models.Content>
+    public class BookToSaveBookMapper : IMapper<Models.Book, SaveBook>, IMapper<SaveBook, Models.Book>
     {
         private readonly IClockService clockService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ContentToSaveContentMapper"/> class.
+        /// Initializes a new instance of the <see cref="BookToSaveBookMapper"/> class.
         /// </summary>
         /// <param name="clockService">The clock service.</param>
-        public ContentToSaveContentMapper(IClockService clockService) =>
+        public BookToSaveBookMapper(IClockService clockService) =>
             this.clockService = clockService;
 
         /// <summary>
-        /// Map content model to save content viewmodel.
+        /// Map book model to save book viewmodel.
         /// </summary>
-        /// <param name="source">The content model.</param>
-        /// <param name="destination">The save content viewmodel.</param>
-        public void Map(Models.Content source, SaveContent destination)
+        /// <param name="source">The book model.</param>
+        /// <param name="destination">The save book viewmodel.</param>
+        public void Map(Models.Book source, SaveBook destination)
         {
             if (source is null)
             {
@@ -36,17 +36,17 @@ namespace Content.Service.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            destination.PageId = source.PageId;
             destination.BookId = source.BookId;
-            destination.Value = source.Value;
+            destination.Name = source.Name;
+            destination.Description = source.Description;
         }
 
         /// <summary>
-        /// Map save content viewmodel to content model.
+        /// Map save book viewmodel to book model.
         /// </summary>
-        /// <param name="source">The save content viewmodel.</param>
-        /// <param name="destination">The content model.</param>
-        public void Map(SaveContent source, Models.Content destination)
+        /// <param name="source">The save book viewmodel.</param>
+        /// <param name="destination">The book model.</param>
+        public void Map(SaveBook source, Models.Book destination)
         {
             if (source is null)
             {
@@ -65,9 +65,9 @@ namespace Content.Service.Mappers
                 destination.Created = now;
             }
 
-            destination.PageId = source.PageId;
             destination.BookId = source.BookId;
-            destination.Value = source.Value;
+            destination.Name = source.Name;
+            destination.Description = source.Description;
             destination.Modified = now;
         }
     }
