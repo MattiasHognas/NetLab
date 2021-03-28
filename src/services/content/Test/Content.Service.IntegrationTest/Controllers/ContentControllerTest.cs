@@ -37,26 +37,6 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task Options_ContentRoot_Returns200OkAsync()
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Options, "content/1");
-
-            var response = await this.client.SendAsync(request).ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(
-                new string[]
-                {
-                    HttpMethods.Delete,
-                    HttpMethods.Head,
-                    HttpMethods.Options,
-                    HttpMethods.Patch,
-                    HttpMethods.Put,
-                },
-                response.Content.Headers.Allow);
-        }
-
-        [Fact]
         public async Task Options_Filter_Returns200OkAsync()
         {
             var filters = new Models.ContentOptionFilter
@@ -267,7 +247,7 @@ namespace Content.Service.IntegrationTest.Controllers
             {
                 PageId = 1,
                 BookId = 1,
-                Value = "X",
+                Value = "x",
             };
             var content = new Models.Content() { ContentId = 1 };
             this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
@@ -335,6 +315,7 @@ namespace Content.Service.IntegrationTest.Controllers
             {
                 PageId = 1,
                 BookId = 1,
+                Value = "x",
             };
             var content = new List<Models.Content> { new Models.Content() { ContentId = 1 } };
             this.ContentRepositoryMock
@@ -362,6 +343,7 @@ namespace Content.Service.IntegrationTest.Controllers
             {
                 PageId = 1,
                 BookId = 1,
+                Value = "x",
             };
             var content = new List<Models.Content>();
             this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
@@ -438,10 +420,10 @@ namespace Content.Service.IntegrationTest.Controllers
                 ContentId = 1,
             };
             var patch = new JsonPatchDocument<SaveContent>();
-            patch.Add(x => x.Value, "Y");
+            patch.Add(x => x.Value, "y");
             var json = JsonConvert.SerializeObject(patch);
             using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            var content = new List<Models.Content> { new Models.Content() { ContentId = 1, PageId = 1, BookId = 1, Value = "X" } };
+            var content = new List<Models.Content> { new Models.Content() { ContentId = 1, PageId = 1, BookId = 1, Value = "x" } };
             this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
             this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
             this.ContentRepositoryMock.Setup(x => x.UpdateAsync(content.First(), It.IsAny<CancellationToken>())).ReturnsAsync(content.First());
@@ -452,7 +434,7 @@ namespace Content.Service.IntegrationTest.Controllers
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var contentViewModel = await response.Content.ReadAsAsync<Content>(this.formatters).ConfigureAwait(false);
-            Assert.Equal("Y", contentViewModel.Value);
+            Assert.Equal("y", contentViewModel.Value);
         }
 
         private static string AddQueryString(string uriString, Models.ContentOptionFilter filters)

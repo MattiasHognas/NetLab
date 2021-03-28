@@ -8,12 +8,6 @@ namespace Workspace.Service.ViewModels
     public class SavePage
     {
         /// <summary>
-        /// Gets or sets the page id.
-        /// </summary>
-        [Range(1, int.MaxValue)]
-        public int PageId { get; set; } = default!;
-
-        /// <summary>
         /// Gets or sets the book id.
         /// </summary>
         [Range(1, int.MaxValue)]

@@ -36,7 +36,8 @@ namespace Workspace.Service.Controllers
                 HttpMethods.Get,
                 HttpMethods.Post,
                 HttpMethods.Head,
-                HttpMethods.Options);
+                HttpMethods.Options,
+                HttpMethods.Patch);
             return this.Ok();
         }
 
@@ -56,7 +57,6 @@ namespace Workspace.Service.Controllers
                 HttpMethods.Delete,
                 HttpMethods.Head,
                 HttpMethods.Options,
-                HttpMethods.Patch,
                 HttpMethods.Put);
             return this.Ok();
         }
@@ -101,12 +101,12 @@ namespace Workspace.Service.Controllers
         /// Patches the page with the specified id.
         /// </summary>
         /// <param name="command">The action command.</param>
-        /// <param name="pageId">The page id.</param>
+        /// <param name="pageOptionFilter">The page option filter.</param>
         /// <param name="patch">The patch document. See http://jsonpatch.com.</param>
         /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
         /// <returns>A 200 OK if the page was patched, a 400 Bad Request if the patch was invalid or a 404 Not Found
         /// if a page with the specified id was not found.</returns>
-        [HttpPatch("{pageId}", Name = PageControllerRoute.PatchPage)]
+        [HttpPatch(Name = PageControllerRoute.PatchPage)]
         [SwaggerResponse(StatusCodes.Status200OK, "The patched page with the specified id.", typeof(Page))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "The patch document is invalid.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "A page with the specified id could not be found.", typeof(ProblemDetails))]
@@ -114,9 +114,9 @@ namespace Workspace.Service.Controllers
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public Task<IActionResult> PatchAsync(
             [FromServices] PatchPageCommand command,
-            int pageId,
+            [FromQuery] PageOptionFilter pageOptionFilter,
             [FromBody] JsonPatchDocument<SavePage> patch,
-            CancellationToken cancellationToken) => command.ExecuteAsync(pageId, patch, cancellationToken);
+            CancellationToken cancellationToken) => command.ExecuteAsync(pageOptionFilter, patch, cancellationToken);
 
         /// <summary>
         /// Creates a new page.

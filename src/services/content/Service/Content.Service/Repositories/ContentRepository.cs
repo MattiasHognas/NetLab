@@ -20,7 +20,7 @@ namespace Content.Service.Repositories
                 PageId = 1,
                 BookId = 1,
                 Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Value = "X",
+                Value = "x",
                 Modified = DateTimeOffset.UtcNow.AddDays(-8),
             },
             new Content()
@@ -29,7 +29,7 @@ namespace Content.Service.Repositories
                 PageId = 1,
                 BookId = 1,
                 Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Value = "X",
+                Value = "x",
                 Modified = DateTimeOffset.UtcNow.AddDays(-8),
             },
             new Content()
@@ -38,7 +38,7 @@ namespace Content.Service.Repositories
                 PageId = 1,
                 BookId = 1,
                 Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Value = "X",
+                Value = "x",
                 Modified = DateTimeOffset.UtcNow.AddDays(-8),
             },
         };

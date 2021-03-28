@@ -37,26 +37,6 @@ namespace Workspace.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task Options_BookRoot_Returns200OkAsync()
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Options, "book/1");
-
-            var response = await this.client.SendAsync(request).ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(
-                new string[]
-                {
-                    HttpMethods.Delete,
-                    HttpMethods.Head,
-                    HttpMethods.Options,
-                    HttpMethods.Patch,
-                    HttpMethods.Put,
-                },
-                response.Content.Headers.Allow);
-        }
-
-        [Fact]
         public async Task Options_Filter_Returns200OkAsync()
         {
             var filters = new Models.BookOptionFilter
@@ -261,7 +241,6 @@ namespace Workspace.Service.IntegrationTest.Controllers
             };
             var saveBook = new SaveBook()
             {
-                BookId = 1,
                 Name = "x",
                 Description = "x",
             };
@@ -329,7 +308,6 @@ namespace Workspace.Service.IntegrationTest.Controllers
             };
             var saveBook = new SaveBook()
             {
-                BookId = 1,
                 Name = "x",
                 Description = "x",
             };
@@ -357,7 +335,6 @@ namespace Workspace.Service.IntegrationTest.Controllers
             };
             var saveBook = new SaveBook()
             {
-                BookId = 1,
                 Name = "x",
                 Description = "x",
             };

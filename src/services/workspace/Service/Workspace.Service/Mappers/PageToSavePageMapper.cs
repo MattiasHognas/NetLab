@@ -36,7 +36,6 @@ namespace Workspace.Service.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            destination.PageId = source.PageId;
             destination.BookId = source.BookId;
             destination.Name = source.Name;
             destination.Description = source.Description;
@@ -66,7 +65,6 @@ namespace Workspace.Service.Mappers
                 destination.Created = now;
             }
 
-            destination.PageId = source.PageId;
             destination.BookId = source.BookId;
             destination.Name = source.Name;
             destination.Description = source.Description;

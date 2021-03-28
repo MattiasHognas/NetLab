@@ -37,26 +37,6 @@ namespace Workspace.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task Options_PageRoot_Returns200OkAsync()
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Options, "page/1");
-
-            var response = await this.client.SendAsync(request).ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(
-                new string[]
-                {
-                    HttpMethods.Delete,
-                    HttpMethods.Head,
-                    HttpMethods.Options,
-                    HttpMethods.Patch,
-                    HttpMethods.Put,
-                },
-                response.Content.Headers.Allow);
-        }
-
-        [Fact]
         public async Task Options_Filter_Returns200OkAsync()
         {
             var filters = new Models.PageOptionFilter
@@ -76,6 +56,7 @@ namespace Workspace.Service.IntegrationTest.Controllers
                     HttpMethods.Post,
                     HttpMethods.Head,
                     HttpMethods.Options,
+                    HttpMethods.Patch,
                 },
                 response.Content.Headers.Allow);
         }
@@ -94,7 +75,6 @@ namespace Workspace.Service.IntegrationTest.Controllers
                     HttpMethods.Delete,
                     HttpMethods.Head,
                     HttpMethods.Options,
-                    HttpMethods.Patch,
                     HttpMethods.Put,
                 },
                 response.Content.Headers.Allow);
@@ -261,7 +241,7 @@ namespace Workspace.Service.IntegrationTest.Controllers
             };
             var savePage = new SavePage()
             {
-                PageId = 1,
+                BookId = 1,
                 Name = "x",
                 Description = "x",
             };
@@ -329,7 +309,7 @@ namespace Workspace.Service.IntegrationTest.Controllers
             };
             var savePage = new SavePage()
             {
-                PageId = 1,
+                BookId = 1,
                 Name = "x",
                 Description = "x",
             };
@@ -357,7 +337,7 @@ namespace Workspace.Service.IntegrationTest.Controllers
             };
             var savePage = new SavePage()
             {
-                PageId = 1,
+                BookId = 1,
                 Name = "x",
                 Description = "x",
             };
@@ -387,6 +367,7 @@ namespace Workspace.Service.IntegrationTest.Controllers
             var filters = new Models.PageOptionFilter
             {
                 PageId = 999,
+                BookId = null,
             };
             var page = new List<Models.Page>();
             var patch = new JsonPatchDocument<SavePage>();
@@ -395,9 +376,8 @@ namespace Workspace.Service.IntegrationTest.Controllers
             using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
             this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
 
-            var response = await this.client
-                .PatchAsync(new Uri("page/999", UriKind.Relative), strcontent)
-                .ConfigureAwait(false);
+            var uriString = AddQueryString("/page", filters);
+            var response = await this.client.PatchAsync(new Uri(uriString, UriKind.Relative), strcontent).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             var problemDetails = await response.Content.ReadAsAsync<ProblemDetails>(this.formatters).ConfigureAwait(false);
@@ -413,7 +393,7 @@ namespace Workspace.Service.IntegrationTest.Controllers
             };
             var page = new List<Models.Page>
             {
-                new Models.Page { PageId = 1 },
+                new Models.Page() { BookId = 1, PageId = 1, Name = "x", Description = "x" },
             };
             var patch = new JsonPatchDocument<SavePage>();
             patch.Remove(x => x.Name);
@@ -421,9 +401,8 @@ namespace Workspace.Service.IntegrationTest.Controllers
             using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
             this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
 
-            var response = await this.client
-                .PatchAsync(new Uri("page/1", UriKind.Relative), strcontent)
-                .ConfigureAwait(false);
+            var uriString = AddQueryString("/page", filters);
+            var response = await this.client.PatchAsync(new Uri(uriString, UriKind.Relative), strcontent).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -439,14 +418,13 @@ namespace Workspace.Service.IntegrationTest.Controllers
             patch.Add(x => x.Name, "x");
             var json = JsonConvert.SerializeObject(patch);
             using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            var page = new List<Models.Page> { new Models.Page() { PageId = 1, Name = "x", Description = "x" } };
+            var page = new List<Models.Page> { new Models.Page() { BookId = 1, PageId = 1, Name = "x", Description = "x" } };
             this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
             this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
             this.PageRepositoryMock.Setup(x => x.UpdateAsync(page.First(), It.IsAny<CancellationToken>())).ReturnsAsync(page.First());
 
-            var response = await this.client
-                .PatchAsync(new Uri("page/1", UriKind.Relative), strcontent)
-                .ConfigureAwait(false);
+            var uriString = AddQueryString("/page", filters);
+            var response = await this.client.PatchAsync(new Uri(uriString, UriKind.Relative), strcontent).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var pageViewModel = await response.Content.ReadAsAsync<Page>(this.formatters).ConfigureAwait(false);

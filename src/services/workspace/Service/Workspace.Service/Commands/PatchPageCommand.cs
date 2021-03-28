@@ -51,16 +51,16 @@ namespace Workspace.Service.Commands
         /// <summary>
         /// Execute async.
         /// </summary>
-        /// <param name="pageId">The page id.</param>
+        /// <param name="pageOptionFilter">The page option filter.</param>
         /// <param name="patch">The patch.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An action result.</returns>
         public async Task<IActionResult> ExecuteAsync(
-            int pageId,
+            PageOptionFilter pageOptionFilter,
             JsonPatchDocument<SavePage> patch,
             CancellationToken cancellationToken)
         {
-            var filters = new Models.PageOptionFilter { PageId = pageId };
+            var filters = new Models.PageOptionFilter { PageId = pageOptionFilter.PageId, BookId = pageOptionFilter.BookId };
             var page = await this.pageRepository.GetAsync(filters, cancellationToken).ConfigureAwait(false);
             if (page is null || !page.Any())
             {
