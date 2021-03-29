@@ -4,6 +4,7 @@ namespace Content.Service
     using System.Linq;
     using Boxed.AspNetCore;
     using Content.Service.Constants;
+    using Content.Service.Data;
     using Content.Service.Options;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
@@ -17,6 +18,19 @@ namespace Content.Service
     /// </summary>
     internal static partial class ApplicationBuilderExtensions
     {
+        /// <summary>
+        /// Seeds the database.
+        /// </summary>
+        /// <param name="application">The application builder.</param>
+        /// <returns>The application builder middleware.</returns>
+        public static IApplicationBuilder UseSeedDatabase(this IApplicationBuilder application)
+        {
+            using var scope = application.ApplicationServices.CreateScope();
+            var contentsContext = scope.ServiceProvider.GetRequiredService<ContentsContext>();
+            ContentsContextSeed.Seed(contentsContext);
+            return application;
+        }
+
         /// <summary>
         /// Uses the static files middleware to serve static files. Also adds the Cache-Control and Pragma HTTP
         /// headers. The cache duration is controlled from configuration.

@@ -2,10 +2,12 @@ namespace Content.Service
 {
     using Boxed.AspNetCore;
     using Content.Service.Constants;
+    using Content.Service.Data;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Infrastructure;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -52,14 +54,16 @@ namespace Content.Service
                 .AddSingleton<IActionContextAccessor, ActionContextAccessor>()
                 .AddCustomApiVersioning()
                 .AddServerTiming()
+                .AddDbContextFactory<ContentsContext>(options => options.UseInMemoryDatabase("Contents"), ServiceLifetime.Scoped)
                 .AddControllers()
-                    .AddCustomJsonOptions(this.webHostEnvironment)
-                    .AddCustomMvcOptions(this.configuration)
+                .AddCustomJsonOptions(this.webHostEnvironment)
+                .AddCustomMvcOptions(this.configuration)
                 .Services
                 .AddProjectCommands()
                 .AddProjectMappers()
                 .AddProjectRepositories()
-                .AddProjectServices();
+                .AddProjectServices()
+                .AddProjectContexts();
 
         /// <summary>
         /// Configures the application and HTTP request pipeline. Configure is called after ConfigureServices is
@@ -93,6 +97,7 @@ namespace Content.Service
                             .RequireCors(CorsPolicyName.AllowAny);
                     })
                 .UseSwagger()
-                .UseCustomSwaggerUI();
+                .UseCustomSwaggerUI()
+                .UseSeedDatabase();
     }
 }

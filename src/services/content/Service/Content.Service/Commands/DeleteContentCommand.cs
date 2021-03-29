@@ -26,7 +26,7 @@ namespace Content.Service.Commands
         /// <param name="contentId">The content id.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An action result.</returns>
-        public async Task<IActionResult> ExecuteAsync(int contentId, CancellationToken cancellationToken)
+        public async Task<IActionResult> ExecuteAsync(ulong contentId, CancellationToken cancellationToken)
         {
             var filters = new Models.ContentOptionFilter { ContentId = contentId };
             var content = await this.contentRepository.GetAsync(filters, cancellationToken).ConfigureAwait(false);

@@ -40,7 +40,7 @@ namespace Workspace.Service.Commands
         /// <param name="saveBook">The save book.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A action result.</returns>
-        public async Task<IActionResult> ExecuteAsync(int bookId, SaveBook saveBook, CancellationToken cancellationToken)
+        public async Task<IActionResult> ExecuteAsync(ulong bookId, SaveBook saveBook, CancellationToken cancellationToken)
         {
             var filters = new Models.BookOptionFilter { BookId = bookId };
             var book = await this.bookRepository.GetAsync(filters, cancellationToken).ConfigureAwait(false);

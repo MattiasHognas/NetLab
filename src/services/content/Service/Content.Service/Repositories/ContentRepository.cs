@@ -5,43 +5,22 @@ namespace Content.Service.Repositories
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Content.Service.Data;
     using Content.Service.Models;
+    using Microsoft.EntityFrameworkCore;
 
     /// <summary>
     /// Content repository.
     /// </summary>
     public class ContentRepository : IContentRepository
     {
-        private static readonly List<Content> Content = new()
-        {
-            new Content()
-            {
-                ContentId = 1,
-                PageId = 1,
-                BookId = 1,
-                Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Value = "x",
-                Modified = DateTimeOffset.UtcNow.AddDays(-8),
-            },
-            new Content()
-            {
-                ContentId = 2,
-                PageId = 1,
-                BookId = 1,
-                Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Value = "x",
-                Modified = DateTimeOffset.UtcNow.AddDays(-8),
-            },
-            new Content()
-            {
-                ContentId = 3,
-                PageId = 1,
-                BookId = 1,
-                Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Value = "x",
-                Modified = DateTimeOffset.UtcNow.AddDays(-8),
-            },
-        };
+        private readonly IDbContextFactory<ContentsContext> contentContextFactory;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContentRepository"/> class.
+        /// </summary>
+        /// <param name="contentContextFactory">The content context factory.</param>
+        public ContentRepository(IDbContextFactory<ContentsContext> contentContextFactory) => this.contentContextFactory = contentContextFactory;
 
         /// <summary>
         /// Add async.
@@ -49,16 +28,20 @@ namespace Content.Service.Repositories
         /// <param name="content">The content.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A content.</returns>
-        public Task<Content> AddAsync(Content content, CancellationToken cancellationToken)
+        public async Task<Content> AddAsync(Content content, CancellationToken cancellationToken)
         {
-            if (content is null)
+            using (var context = this.contentContextFactory.CreateDbContext())
             {
-                throw new ArgumentNullException(nameof(content));
-            }
+                if (content is null)
+                {
+                    throw new ArgumentNullException(nameof(content));
+                }
 
-            Content.Add(content);
-            content.ContentId = Content.Max(x => x.ContentId) + 1;
-            return Task.FromResult(content);
+                context.Content.Add(content);
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+                return await Task.FromResult(content).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -67,14 +50,17 @@ namespace Content.Service.Repositories
         /// <param name="content">The content.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A completed task.</returns>
-        public Task DeleteAsync(Content content, CancellationToken cancellationToken)
+        public async Task<int> DeleteAsync(Content content, CancellationToken cancellationToken)
         {
-            if (Content.Contains(content))
+            using (var context = this.contentContextFactory.CreateDbContext())
             {
-                Content.Remove(content);
-            }
+                if (context.Content.Any(item => item.ContentId == content.ContentId))
+                {
+                    context.Content.Remove(content);
+                }
 
-            return Task.CompletedTask;
+                return await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -86,11 +72,12 @@ namespace Content.Service.Repositories
         public Task<List<Content>> GetAsync(
             ContentOptionFilter contentOptionFilter,
             CancellationToken cancellationToken) =>
-            Task.FromResult(Content
+            Task.FromResult(this.contentContextFactory.CreateDbContext()
+                .Content
                 .OrderBy(x => x.Created)
-                .If(contentOptionFilter.ContentId.HasValue, x => x.Where(y => y.ContentId == contentOptionFilter.ContentId))
-                .If(contentOptionFilter.PageId.HasValue, x => x.Where(y => y.PageId == contentOptionFilter.PageId))
-                .If(contentOptionFilter.BookId.HasValue, x => x.Where(y => y.BookId == contentOptionFilter.BookId))
+                .If<Models.Content>(contentOptionFilter.ContentId.HasValue, x => x.Where(y => y.ContentId == contentOptionFilter.ContentId))
+                .If<Models.Content>(contentOptionFilter.PageId.HasValue, x => x.Where(y => y.PageId == contentOptionFilter.PageId))
+                .If<Models.Content>(contentOptionFilter.BookId.HasValue, x => x.Where(y => y.BookId == contentOptionFilter.BookId))
                 .ToList());
 
         /// <summary>
@@ -98,7 +85,7 @@ namespace Content.Service.Repositories
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An id.</returns>
-        public Task<int> GetTotalCountAsync(CancellationToken cancellationToken) => Task.FromResult(Content.Count);
+        public Task<int> GetTotalCountAsync(CancellationToken cancellationToken) => Task.FromResult(this.contentContextFactory.CreateDbContext().Content.Count());
 
         /// <summary>
         /// Update async.
@@ -106,18 +93,27 @@ namespace Content.Service.Repositories
         /// <param name="content">The content.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A content.</returns>
-        public Task<Content> UpdateAsync(Content content, CancellationToken cancellationToken)
+        public async Task<Content> UpdateAsync(Content content, CancellationToken cancellationToken)
         {
-            if (content is null)
+            using (var context = this.contentContextFactory.CreateDbContext())
             {
-                throw new ArgumentNullException(nameof(content));
-            }
+                if (content is null)
+                {
+                    throw new ArgumentNullException(nameof(content));
+                }
 
-            var existingContent = Content.First(x => x.ContentId == content.ContentId);
-            // existingContent.BookId = content.BookId;
-            existingContent.Value = content.Value;
-            // existingContent.UserId = content.UserId;
-            return Task.FromResult(content);
+                var existingContent = context.Content.FirstOrDefault(x => x.ContentId == content.ContentId);
+                if (existingContent is null)
+                {
+                    throw new NotSupportedException($"The content does not exist in the database {nameof(content)}");
+                }
+
+                existingContent.Value = content.Value;
+
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+                return await Task.FromResult(content).ConfigureAwait(false);
+            }
         }
     }
 }

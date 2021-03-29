@@ -10,14 +10,14 @@ namespace Content.Service.ViewModels
         /// <summary>
         /// Gets or sets the page id.
         /// </summary>
-        [Range(1, int.MaxValue)]
-        public int PageId { get; set; } = default!;
+        [Range(1, ulong.MaxValue)]
+        public ulong PageId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the book id.
         /// </summary>
-        [Range(1, int.MaxValue)]
-        public int BookId { get; set; } = default!;
+        [Range(1, ulong.MaxValue)]
+        public ulong BookId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the value.

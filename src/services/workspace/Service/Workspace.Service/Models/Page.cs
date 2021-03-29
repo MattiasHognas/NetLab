@@ -10,12 +10,12 @@
         /// <summary>
         /// Gets or sets the page id.
         /// </summary>
-        public int PageId { get; set; }
+        public ulong PageId { get; set; }
 
         /// <summary>
         /// Gets or sets the book id.
         /// </summary>
-        public int BookId { get; set; }
+        public ulong BookId { get; set; }
 
         /// <summary>
         /// Gets or sets the name.

@@ -26,7 +26,7 @@ namespace Workspace.Service.Commands
         /// <param name="pageId">The page id.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An action result.</returns>
-        public async Task<IActionResult> ExecuteAsync(int pageId, CancellationToken cancellationToken)
+        public async Task<IActionResult> ExecuteAsync(ulong pageId, CancellationToken cancellationToken)
         {
             var filters = new Models.PageOptionFilter { PageId = pageId };
             var page = await this.pageRepository.GetAsync(filters, cancellationToken).ConfigureAwait(false);

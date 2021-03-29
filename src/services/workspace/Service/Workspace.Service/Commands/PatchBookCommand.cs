@@ -56,7 +56,7 @@ namespace Workspace.Service.Commands
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An action result.</returns>
         public async Task<IActionResult> ExecuteAsync(
-            int bookId,
+            ulong bookId,
             JsonPatchDocument<SaveBook> patch,
             CancellationToken cancellationToken)
         {

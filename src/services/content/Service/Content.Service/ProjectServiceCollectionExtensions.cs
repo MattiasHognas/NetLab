@@ -2,6 +2,7 @@ namespace Content.Service
 {
     using Boxed.Mapping;
     using Content.Service.Commands;
+    using Content.Service.Data;
     using Content.Service.Mappers;
     using Content.Service.Repositories;
     using Content.Service.Services;
@@ -22,20 +23,20 @@ namespace Content.Service
         /// Adds command middlewares to the service collection.
         /// </summary>
         /// <param name="services">The services.</param>
-        /// <returns>The services with command services added.</returns>
+        /// <returns>The services with commands added.</returns>
         public static IServiceCollection AddProjectCommands(this IServiceCollection services) =>
             services
-                .AddSingleton<DeleteContentCommand>()
-                .AddSingleton<GetContentCommand>()
-                .AddSingleton<PatchContentCommand>()
-                .AddSingleton<PostContentCommand>()
-                .AddSingleton<PutContentCommand>();
+                .AddScoped<DeleteContentCommand>()
+                .AddScoped<GetContentCommand>()
+                .AddScoped<PatchContentCommand>()
+                .AddScoped<PostContentCommand>()
+                .AddScoped<PutContentCommand>();
 
         /// <summary>
         /// Adds mapping middlewares to the service collection.
         /// </summary>
         /// <param name="services">The services.</param>
-        /// <returns>The services with mapping services added.</returns>
+        /// <returns>The services with mappings added.</returns>
         public static IServiceCollection AddProjectMappers(this IServiceCollection services) =>
             services
                 .AddSingleton<IMapper<Models.Content, Content>, ContentToContentMapper>()
@@ -47,10 +48,10 @@ namespace Content.Service
         /// Adds repository middlewares to the service collection.
         /// </summary>
         /// <param name="services">The services.</param>
-        /// <returns>The services with repository services added.</returns>
+        /// <returns>The services with repositories added.</returns>
         public static IServiceCollection AddProjectRepositories(this IServiceCollection services) =>
             services
-                .AddSingleton<IContentRepository, ContentRepository>();
+                .AddScoped<IContentRepository, ContentRepository>();
 
         /// <summary>
         /// Adds service middlewares to the service collection.
@@ -60,5 +61,14 @@ namespace Content.Service
         public static IServiceCollection AddProjectServices(this IServiceCollection services) =>
             services
                 .AddSingleton<IClockService, ClockService>();
+
+        /// <summary>
+        /// Adds context middlewares to the service collection.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        /// <returns>The services with contexts added.</returns>
+        public static IServiceCollection AddProjectContexts(this IServiceCollection services) =>
+            services
+                .AddScoped<ContentsContext>();
     }
 }

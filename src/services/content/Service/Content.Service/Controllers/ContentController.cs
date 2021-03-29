@@ -74,7 +74,7 @@ namespace Content.Service.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "A content with the specified id was not found.", typeof(ProblemDetails))]
         public Task<IActionResult> DeleteAsync(
             [FromServices] DeleteContentCommand command,
-            int contentId,
+            ulong contentId,
             CancellationToken cancellationToken) => command.ExecuteAsync(contentId, cancellationToken);
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Content.Service.Controllers
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public Task<IActionResult> PatchAsync(
             [FromServices] PatchContentCommand command,
-            int contentId,
+            ulong contentId,
             [FromBody] JsonPatchDocument<SaveContent> patch,
             CancellationToken cancellationToken) => command.ExecuteAsync(contentId, patch, cancellationToken);
 
@@ -153,7 +153,7 @@ namespace Content.Service.Controllers
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public Task<IActionResult> PutAsync(
             [FromServices] PutContentCommand command,
-            int contentId,
+            ulong contentId,
             [FromBody] SaveContent content,
             CancellationToken cancellationToken) => command.ExecuteAsync(contentId, content, cancellationToken);
     }

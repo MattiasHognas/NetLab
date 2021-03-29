@@ -89,7 +89,7 @@ namespace Content.Service.IntegrationTest.Controllers
             };
             var content = new List<Models.Content> { new Models.Content() };
             this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-            this.ContentRepositoryMock.Setup(x => x.DeleteAsync(content.First(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+            this.ContentRepositoryMock.Setup(x => x.DeleteAsync(content.First(), It.IsAny<CancellationToken>())).ReturnsAsync(0);
             var response = await this.client.DeleteAsync(new Uri("/content/1", UriKind.Relative)).ConfigureAwait(false);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

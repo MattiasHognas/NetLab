@@ -24,7 +24,7 @@ namespace Content.Service.Repositories
         /// <param name="content">The content.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A completed task.</returns>
-        Task DeleteAsync(Content content, CancellationToken cancellationToken);
+        Task<int> DeleteAsync(Content content, CancellationToken cancellationToken);
 
         /// <summary>
         /// Get async.

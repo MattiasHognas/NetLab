@@ -1,27 +1,27 @@
 namespace Content.Service.Repositories
 {
     using System;
-    using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// The enumerable extensions.
     /// </summary>
-    public static class EnumerableExtensions
+    public static class QueryableExtensions
     {
         /// <summary>If.</summary>
         /// <typeparam name="T">The generic type parameter.</typeparam>
-        /// <param name="enumerable">Enumerable.</param>
+        /// <param name="queryable">Queryable.</param>
         /// <param name="condition">Condition.</param>
         /// <param name="action">Action.</param>
         /// <returns>A list of <typeparamref name="T"/>.</returns>
-        public static IEnumerable<T> If<T>(
-            this IEnumerable<T> enumerable,
+        public static IQueryable<T> If<T>(
+            this IQueryable<T> queryable,
             bool condition,
-            Func<IEnumerable<T>, IEnumerable<T>> action)
+            Func<IQueryable<T>, IQueryable<T>> action)
         {
-            if (enumerable is null)
+            if (queryable is null)
             {
-                throw new ArgumentNullException(nameof(enumerable));
+                throw new ArgumentNullException(nameof(queryable));
             }
 
             if (action is null)
@@ -31,10 +31,10 @@ namespace Content.Service.Repositories
 
             if (condition)
             {
-                return action(enumerable);
+                return action(queryable);
             }
 
-            return enumerable;
+            return queryable;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace Content.Service.Models
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
 
     /// <summary>
     /// The content model.
@@ -10,17 +11,18 @@
         /// <summary>
         /// Gets or sets the content id.
         /// </summary>
-        public int ContentId { get; set; }
+        [Key]
+        public ulong ContentId { get; set; }
 
         /// <summary>
         /// Gets or sets the page id.
         /// </summary>
-        public int PageId { get; set; }
+        public ulong PageId { get; set; }
 
         /// <summary>
         /// Gets or sets the book id.
         /// </summary>
-        public int BookId { get; set; }
+        public ulong BookId { get; set; }
 
         /// <summary>
         /// Gets or sets the value.

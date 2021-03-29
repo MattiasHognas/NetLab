@@ -10,8 +10,8 @@ namespace Workspace.Service.ViewModels
         /// <summary>
         /// Gets or sets the book id.
         /// </summary>
-        [Range(1, int.MaxValue)]
-        public int BookId { get; set; } = default!;
+        [Range(1, ulong.MaxValue)]
+        public ulong BookId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the name.

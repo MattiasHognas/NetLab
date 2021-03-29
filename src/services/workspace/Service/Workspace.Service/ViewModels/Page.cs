@@ -10,12 +10,12 @@ namespace Workspace.Service.ViewModels
         /// <summary>
         /// Gets or sets the page id of the page.
         /// </summary>
-        public int PageId { get; set; } = default!;
+        public ulong PageId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the book id of the page.
         /// </summary>
-        public int BookId { get; set; } = default!;
+        public ulong BookId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the name of the page.

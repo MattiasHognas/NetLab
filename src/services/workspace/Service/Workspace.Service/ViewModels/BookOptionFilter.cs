@@ -8,6 +8,6 @@ namespace Workspace.Service.ViewModels
         /// <summary>
         /// Gets or sets the book id which is filtered.
         /// </summary>
-        public int? BookId { get; set; }
+        public ulong? BookId { get; set; }
     }
 }
