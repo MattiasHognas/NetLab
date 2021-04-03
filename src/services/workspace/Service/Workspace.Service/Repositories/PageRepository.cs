@@ -5,6 +5,8 @@ namespace Workspace.Service.Repositories
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Workspace.Service.Data;
     using Workspace.Service.Models;
 
     /// <summary>
@@ -12,36 +14,13 @@ namespace Workspace.Service.Repositories
     /// </summary>
     public class PageRepository : IPageRepository
     {
-        private static readonly List<Page> Page = new()
-        {
-            new Page()
-            {
-                PageId = 1,
-                BookId = 1,
-                Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Name = "A",
-                Description = "A",
-                Modified = DateTimeOffset.UtcNow.AddDays(-8),
-            },
-            new Page()
-            {
-                PageId = 2,
-                BookId = 1,
-                Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Name = "B",
-                Description = "B",
-                Modified = DateTimeOffset.UtcNow.AddDays(-8),
-            },
-            new Page()
-            {
-                PageId = 3,
-                BookId = 1,
-                Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Name = "C",
-                Description = "C",
-                Modified = DateTimeOffset.UtcNow.AddDays(-8),
-            },
-        };
+        private readonly IDbContextFactory<WorkspaceContext> workspaceContextFactory;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BookRepository"/> class.
+        /// </summary>
+        /// <param name="workspaceContextFactory">The content context factory.</param>
+        public PageRepository(IDbContextFactory<WorkspaceContext> workspaceContextFactory) => this.workspaceContextFactory = workspaceContextFactory;
 
         /// <summary>
         /// Add async.
@@ -51,14 +30,17 @@ namespace Workspace.Service.Repositories
         /// <returns>A page.</returns>
         public Task<Page> AddAsync(Page page, CancellationToken cancellationToken)
         {
-            if (page is null)
+            using (var context = this.workspaceContextFactory.CreateDbContext())
             {
-                throw new ArgumentNullException(nameof(page));
-            }
+                if (page is null)
+                {
+                    throw new ArgumentNullException(nameof(page));
+                }
 
-            Page.Add(page);
-            page.PageId = Page.Max(x => x.PageId) + 1;
-            return Task.FromResult(page);
+                context.Pages.Add(page);
+                page.PageId = context.Pages.Max(x => x.PageId) + 1;
+                return Task.FromResult(page);
+            }
         }
 
         /// <summary>
@@ -69,12 +51,15 @@ namespace Workspace.Service.Repositories
         /// <returns>A completed task.</returns>
         public Task DeleteAsync(Page page, CancellationToken cancellationToken)
         {
-            if (Page.Contains(page))
+            using (var context = this.workspaceContextFactory.CreateDbContext())
             {
-                Page.Remove(page);
-            }
+                if (context.Pages.Contains(page))
+                {
+                    context.Pages.Remove(page);
+                }
 
-            return Task.CompletedTask;
+                return Task.CompletedTask;
+            }
         }
 
         /// <summary>
@@ -86,8 +71,10 @@ namespace Workspace.Service.Repositories
         public Task<List<Page>> GetAsync(
             PageOptionFilter pageOptionFilter,
             CancellationToken cancellationToken) =>
-            Task.FromResult(Page
-                .OrderBy(x => x.Created)
+            Task.FromResult(this.workspaceContextFactory.CreateDbContext()
+                .Pages
+                .OrderBy(x => x.ModifiedDate)
+                .ThenBy(x => x.CreatedDate)
                 .If(pageOptionFilter.PageId.HasValue, x => x.Where(y => y.PageId == pageOptionFilter.PageId))
                 .If(pageOptionFilter.BookId.HasValue, x => x.Where(y => y.BookId == pageOptionFilter.BookId))
                 .ToList());
@@ -97,7 +84,8 @@ namespace Workspace.Service.Repositories
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An id.</returns>
-        public Task<int> GetTotalCountAsync(CancellationToken cancellationToken) => Task.FromResult(Page.Count);
+        public Task<int> GetTotalCountAsync(CancellationToken cancellationToken) =>
+            Task.FromResult(this.workspaceContextFactory.CreateDbContext().Pages.Count());
 
         /// <summary>
         /// Update async.
@@ -107,15 +95,18 @@ namespace Workspace.Service.Repositories
         /// <returns>A page.</returns>
         public Task<Page> UpdateAsync(Page page, CancellationToken cancellationToken)
         {
-            if (page is null)
+            using (var context = this.workspaceContextFactory.CreateDbContext())
             {
-                throw new ArgumentNullException(nameof(page));
-            }
+                if (page is null)
+                {
+                    throw new ArgumentNullException(nameof(page));
+                }
 
-            var existingPage = Page.First(x => x.PageId == page.PageId);
-            existingPage.Name = page.Name;
-            existingPage.Description = page.Description;
-            return Task.FromResult(page);
+                var existingPage = context.Pages.First(x => x.PageId == page.PageId);
+                existingPage.Name = page.Name;
+                existingPage.Description = page.Description;
+                return Task.FromResult(page);
+            }
         }
     }
 }

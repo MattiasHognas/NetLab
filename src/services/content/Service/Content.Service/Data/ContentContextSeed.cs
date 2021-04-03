@@ -1,6 +1,5 @@
 namespace Content.Service.Data
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Content.Service.Models;
@@ -8,16 +7,16 @@ namespace Content.Service.Data
     /// <summary>
     /// Content context seed.
     /// </summary>
-    public class ContentsContextSeed
+    public class ContentContextSeed
     {
         /// <summary>
         /// Seeds the context.
         /// </summary>
-        /// <param name="contentsContext">The contents context.</param>
+        /// <param name="contentContext">The content context.</param>
         /// <returns>The number of items seeded.</returns>
-        public static int Seed(ContentsContext contentsContext)
+        public static int Seed(ContentContext contentContext)
         {
-            if (!contentsContext.Content.Any())
+            if (!contentContext.Contents.Any())
             {
                 var contents = new List<Content>
                 {
@@ -26,34 +25,27 @@ namespace Content.Service.Data
                         ContentId = 1,
                         PageId = 1,
                         BookId = 1,
-                        Created = DateTimeOffset.UtcNow.AddDays(-8),
                         Value = "x",
-                        Modified = DateTimeOffset.UtcNow.AddDays(-8),
                     },
                     new Content()
                     {
                         ContentId = 2,
                         PageId = 1,
                         BookId = 1,
-                        Created = DateTimeOffset.UtcNow.AddDays(-8),
                         Value = "x",
-                        Modified = DateTimeOffset.UtcNow.AddDays(-8),
                     },
                     new Content()
                     {
                         ContentId = 3,
                         PageId = 1,
                         BookId = 1,
-                        Created = DateTimeOffset.UtcNow.AddDays(-8),
                         Value = "x",
-                        Modified = DateTimeOffset.UtcNow.AddDays(-8),
                     },
                 };
-                contentsContext.Content.AddRange(contents);
-                return contentsContext.SaveChanges();
+                contentContext.Contents.AddRange(contents);
             }
 
-            return 0;
+            return contentContext.SaveChanges();
         }
     }
 }

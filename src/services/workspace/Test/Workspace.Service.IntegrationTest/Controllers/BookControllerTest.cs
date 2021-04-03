@@ -166,7 +166,7 @@ namespace Workspace.Service.IntegrationTest.Controllers
             {
                 BookId = 1,
             };
-            var book = new List<Models.Book> { new Models.Book { BookId = 1, Modified = new DateTimeOffset(2000, 1, 2, 3, 4, 5, TimeSpan.FromHours(6)) } };
+            var book = new List<Models.Book> { new Models.Book { BookId = 1, ModifiedDate = new DateTimeOffset(2000, 1, 2, 3, 4, 5, TimeSpan.FromHours(6)) } };
             this.BookRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.BookOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(book);
             var uriString = AddQueryString("/book", filters);
             var response = await this.client.GetAsync(new Uri(uriString, UriKind.Relative)).ConfigureAwait(false);
@@ -221,7 +221,7 @@ namespace Workspace.Service.IntegrationTest.Controllers
             {
                 BookId = 1,
             };
-            var book = new List<Models.Book> { new Models.Book() { Modified = new DateTimeOffset(2000, 1, 1, 0, 0, 1, TimeSpan.Zero) } };
+            var book = new List<Models.Book> { new Models.Book() { ModifiedDate = new DateTimeOffset(2000, 1, 1, 0, 0, 1, TimeSpan.Zero) } };
             this.BookRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.BookOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(book);
             var uriString = AddQueryString("/book", filters);
             using var request = new HttpRequestMessage(HttpMethod.Get, uriString);

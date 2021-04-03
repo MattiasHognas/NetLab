@@ -10,6 +10,7 @@ namespace Workspace.Service
     using Serilog;
     using Serilog.Events;
     using Workspace.Service.Constants;
+    using Workspace.Service.Data;
     using Workspace.Service.Options;
 
     /// <summary>
@@ -17,6 +18,19 @@ namespace Workspace.Service
     /// </summary>
     internal static partial class ApplicationBuilderExtensions
     {
+        /// <summary>
+        /// Seeds the database.
+        /// </summary>
+        /// <param name="application">The application builder.</param>
+        /// <returns>The application builder middleware.</returns>
+        public static IApplicationBuilder UseSeedDatabase(this IApplicationBuilder application)
+        {
+            using var scope = application.ApplicationServices.CreateScope();
+            var workspaceContext = scope.ServiceProvider.GetRequiredService<WorkspaceContext>();
+            WorkspaceContextSeed.Seed(workspaceContext);
+            return application;
+        }
+
         /// <summary>
         /// Uses the static files middleware to serve static files. Also adds the Cache-Control and Pragma HTTP
         /// headers. The cache duration is controlled from configuration.

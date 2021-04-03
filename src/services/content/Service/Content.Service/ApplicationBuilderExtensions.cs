@@ -26,8 +26,8 @@ namespace Content.Service
         public static IApplicationBuilder UseSeedDatabase(this IApplicationBuilder application)
         {
             using var scope = application.ApplicationServices.CreateScope();
-            var contentsContext = scope.ServiceProvider.GetRequiredService<ContentsContext>();
-            ContentsContextSeed.Seed(contentsContext);
+            var contentContext = scope.ServiceProvider.GetRequiredService<ContentContext>();
+            ContentContextSeed.Seed(contentContext);
             return application;
         }
 

@@ -1,8 +1,10 @@
 namespace Workspace.Service
 {
     using Boxed.Mapping;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Workspace.Service.Commands;
+    using Workspace.Service.Data;
     using Workspace.Service.Mappers;
     using Workspace.Service.Repositories;
     using Workspace.Service.Services;
@@ -70,5 +72,15 @@ namespace Workspace.Service
         public static IServiceCollection AddProjectServices(this IServiceCollection services) =>
             services
                 .AddSingleton<IClockService, ClockService>();
+
+        /// <summary>
+        /// Adds context middlewares to the service collection.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        /// <returns>The services with contexts added.</returns>
+        public static IServiceCollection AddProjectContexts(this IServiceCollection services) =>
+            services
+                .AddDbContextFactory<WorkspaceContext>(options => options.UseInMemoryDatabase("Workspace"), ServiceLifetime.Singleton)
+                .AddTransient(serviceProvider => serviceProvider.GetRequiredService<IDbContextFactory<WorkspaceContext>>().CreateDbContext());
     }
 }

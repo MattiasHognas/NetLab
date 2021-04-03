@@ -5,6 +5,8 @@ namespace Workspace.Service.Repositories
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Workspace.Service.Data;
     using Workspace.Service.Models;
 
     /// <summary>
@@ -12,33 +14,13 @@ namespace Workspace.Service.Repositories
     /// </summary>
     public class BookRepository : IBookRepository
     {
-        private static readonly List<Book> Book = new()
-        {
-            new Book()
-            {
-                BookId = 1,
-                Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Name = "A",
-                Description = "A",
-                Modified = DateTimeOffset.UtcNow.AddDays(-8),
-            },
-            new Book()
-            {
-                BookId = 2,
-                Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Name = "B",
-                Description = "B",
-                Modified = DateTimeOffset.UtcNow.AddDays(-8),
-            },
-            new Book()
-            {
-                BookId = 3,
-                Created = DateTimeOffset.UtcNow.AddDays(-8),
-                Name = "C",
-                Description = "C",
-                Modified = DateTimeOffset.UtcNow.AddDays(-8),
-            },
-        };
+        private readonly IDbContextFactory<WorkspaceContext> workspaceContextFactory;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BookRepository"/> class.
+        /// </summary>
+        /// <param name="workspaceContextFactory">The content context factory.</param>
+        public BookRepository(IDbContextFactory<WorkspaceContext> workspaceContextFactory) => this.workspaceContextFactory = workspaceContextFactory;
 
         /// <summary>
         /// Add async.
@@ -48,14 +30,16 @@ namespace Workspace.Service.Repositories
         /// <returns>A book.</returns>
         public Task<Book> AddAsync(Book book, CancellationToken cancellationToken)
         {
-            if (book is null)
+            using (var context = this.workspaceContextFactory.CreateDbContext())
             {
-                throw new ArgumentNullException(nameof(book));
-            }
+                if (book is null)
+                {
+                    throw new ArgumentNullException(nameof(book));
+                }
 
-            Book.Add(book);
-            book.BookId = Book.Max(x => x.BookId) + 1;
-            return Task.FromResult(book);
+                context.Books.Add(book);
+                return Task.FromResult(book);
+            }
         }
 
         /// <summary>
@@ -66,12 +50,15 @@ namespace Workspace.Service.Repositories
         /// <returns>A completed task.</returns>
         public Task DeleteAsync(Book book, CancellationToken cancellationToken)
         {
-            if (Book.Contains(book))
+            using (var context = this.workspaceContextFactory.CreateDbContext())
             {
-                Book.Remove(book);
-            }
+                if (context.Books.Contains(book))
+                {
+                    context.Books.Remove(book);
+                }
 
-            return Task.CompletedTask;
+                return Task.CompletedTask;
+            }
         }
 
         /// <summary>
@@ -83,8 +70,10 @@ namespace Workspace.Service.Repositories
         public Task<List<Book>> GetAsync(
             BookOptionFilter bookOptionFilter,
             CancellationToken cancellationToken) =>
-            Task.FromResult(Book
-                .OrderBy(x => x.Created)
+            Task.FromResult(this.workspaceContextFactory.CreateDbContext()
+                .Books
+                .OrderBy(x => x.ModifiedDate)
+                .ThenBy(x => x.CreatedDate)
                 .If(bookOptionFilter.BookId.HasValue, x => x.Where(y => y.BookId == bookOptionFilter.BookId))
                 .ToList());
 
@@ -93,7 +82,8 @@ namespace Workspace.Service.Repositories
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An id.</returns>
-        public Task<int> GetTotalCountAsync(CancellationToken cancellationToken) => Task.FromResult(Book.Count);
+        public Task<int> GetTotalCountAsync(CancellationToken cancellationToken) =>
+            Task.FromResult(this.workspaceContextFactory.CreateDbContext().Books.Count());
 
         /// <summary>
         /// Update async.
@@ -103,15 +93,18 @@ namespace Workspace.Service.Repositories
         /// <returns>A book.</returns>
         public Task<Book> UpdateAsync(Book book, CancellationToken cancellationToken)
         {
-            if (book is null)
+            using (var context = this.workspaceContextFactory.CreateDbContext())
             {
-                throw new ArgumentNullException(nameof(book));
-            }
+                if (book is null)
+                {
+                    throw new ArgumentNullException(nameof(book));
+                }
 
-            var existingBook = Book.First(x => x.BookId == book.BookId);
-            existingBook.Name = book.Name;
-            existingBook.Description = book.Description;
-            return Task.FromResult(book);
+                var existingBook = context.Books.First(x => x.BookId == book.BookId);
+                existingBook.Name = book.Name;
+                existingBook.Description = book.Description;
+                return Task.FromResult(book);
+            }
         }
     }
 }

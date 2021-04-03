@@ -13,7 +13,7 @@ namespace Workspace.Service.ViewModels
         public ulong PageId { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the book id of the page.
+        /// Gets or sets the book.
         /// </summary>
         public ulong BookId { get; set; } = default!;
 

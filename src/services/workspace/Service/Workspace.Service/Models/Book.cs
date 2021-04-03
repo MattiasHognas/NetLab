@@ -1,12 +1,20 @@
 ﻿namespace Workspace.Service.Models
 {
-    using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// The book model.
     /// </summary>
-    public class Book
+    public class Book : BaseEntity
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Book"/> class.
+        /// </summary>
+        public Book()
+        {
+            this.Pages = new HashSet<Page>();
+        }
+
         /// <summary>
         /// Gets or sets the book id.
         /// </summary>
@@ -23,13 +31,8 @@
         public string Description { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the created date.
+        /// Gets or sets the pages.
         /// </summary>
-        public DateTimeOffset Created { get; set; }
-
-        /// <summary>
-        /// Gets or sets the modified date.
-        /// </summary>
-        public DateTimeOffset Modified { get; set; }
+        public virtual ICollection<Page> Pages { get; private set; }
     }
 }

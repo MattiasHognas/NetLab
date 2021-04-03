@@ -57,16 +57,8 @@ namespace Workspace.Service.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            var now = this.clockService.UtcNow;
-
-            if (destination.Created == DateTimeOffset.MinValue)
-            {
-                destination.Created = now;
-            }
-
             destination.Name = source.Name;
             destination.Description = source.Description;
-            destination.Modified = now;
         }
     }
 }

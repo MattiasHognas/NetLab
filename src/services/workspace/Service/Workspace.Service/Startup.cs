@@ -59,7 +59,8 @@ namespace Workspace.Service
                 .AddProjectCommands()
                 .AddProjectMappers()
                 .AddProjectRepositories()
-                .AddProjectServices();
+                .AddProjectServices()
+                .AddProjectContexts();
 
         /// <summary>
         /// Configures the application and HTTP request pipeline. Configure is called after ConfigureServices is

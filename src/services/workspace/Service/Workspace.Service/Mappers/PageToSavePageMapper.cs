@@ -2,7 +2,6 @@ namespace Workspace.Service.Mappers
 {
     using System;
     using Boxed.Mapping;
-    using Workspace.Service.Services;
     using Workspace.Service.ViewModels;
 
     /// <summary>
@@ -10,15 +9,6 @@ namespace Workspace.Service.Mappers
     /// </summary>
     public class PageToSavePageMapper : IMapper<Models.Page, SavePage>, IMapper<SavePage, Models.Page>
     {
-        private readonly IClockService clockService;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PageToSavePageMapper"/> class.
-        /// </summary>
-        /// <param name="clockService">The clock service.</param>
-        public PageToSavePageMapper(IClockService clockService) =>
-            this.clockService = clockService;
-
         /// <summary>
         /// Map page model to save page viewmodel.
         /// </summary>
@@ -36,7 +26,7 @@ namespace Workspace.Service.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            destination.BookId = source.BookId;
+            destination.BookId = source.Book.BookId;
             destination.Name = source.Name;
             destination.Description = source.Description;
         }
@@ -58,17 +48,9 @@ namespace Workspace.Service.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            var now = this.clockService.UtcNow;
-
-            if (destination.Created == DateTimeOffset.MinValue)
-            {
-                destination.Created = now;
-            }
-
             destination.BookId = source.BookId;
             destination.Name = source.Name;
             destination.Description = source.Description;
-            destination.Modified = now;
         }
     }
 }

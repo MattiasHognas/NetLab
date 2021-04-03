@@ -166,7 +166,7 @@ namespace Workspace.Service.IntegrationTest.Controllers
             {
                 PageId = 1,
             };
-            var page = new List<Models.Page> { new Models.Page { PageId = 1, Modified = new DateTimeOffset(2000, 1, 2, 3, 4, 5, TimeSpan.FromHours(6)) } };
+            var page = new List<Models.Page> { new Models.Page { PageId = 1, ModifiedDate = new DateTimeOffset(2000, 1, 2, 3, 4, 5, TimeSpan.FromHours(6)) } };
             this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
             var uriString = AddQueryString("/page", filters);
             var response = await this.client.GetAsync(new Uri(uriString, UriKind.Relative)).ConfigureAwait(false);
@@ -221,7 +221,7 @@ namespace Workspace.Service.IntegrationTest.Controllers
             {
                 PageId = 1,
             };
-            var page = new List<Models.Page> { new Models.Page() { Modified = new DateTimeOffset(2000, 1, 1, 0, 0, 1, TimeSpan.Zero) } };
+            var page = new List<Models.Page> { new Models.Page() { ModifiedDate = new DateTimeOffset(2000, 1, 1, 0, 0, 1, TimeSpan.Zero) } };
             this.PageRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.PageOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(page);
             var uriString = AddQueryString("/page", filters);
             using var request = new HttpRequestMessage(HttpMethod.Get, uriString);

@@ -2,7 +2,6 @@ namespace Content.Service.Mappers
 {
     using System;
     using Boxed.Mapping;
-    using Content.Service.Services;
     using Content.Service.ViewModels;
 
     /// <summary>
@@ -10,15 +9,6 @@ namespace Content.Service.Mappers
     /// </summary>
     public class ContentToSaveContentMapper : IMapper<Models.Content, SaveContent>, IMapper<SaveContent, Models.Content>
     {
-        private readonly IClockService clockService;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ContentToSaveContentMapper"/> class.
-        /// </summary>
-        /// <param name="clockService">The clock service.</param>
-        public ContentToSaveContentMapper(IClockService clockService) =>
-            this.clockService = clockService;
-
         /// <summary>
         /// Map content model to save content viewmodel.
         /// </summary>
@@ -58,17 +48,9 @@ namespace Content.Service.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            var now = this.clockService.UtcNow;
-
-            if (destination.Created == DateTimeOffset.MinValue)
-            {
-                destination.Created = now;
-            }
-
             destination.PageId = source.PageId;
             destination.BookId = source.BookId;
             destination.Value = source.Value;
-            destination.Modified = now;
         }
     }
 }

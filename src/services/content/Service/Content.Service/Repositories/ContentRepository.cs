@@ -14,13 +14,13 @@ namespace Content.Service.Repositories
     /// </summary>
     public class ContentRepository : IContentRepository
     {
-        private readonly IDbContextFactory<ContentsContext> contentContextFactory;
+        private readonly IDbContextFactory<ContentContext> contentContextFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContentRepository"/> class.
         /// </summary>
         /// <param name="contentContextFactory">The content context factory.</param>
-        public ContentRepository(IDbContextFactory<ContentsContext> contentContextFactory) => this.contentContextFactory = contentContextFactory;
+        public ContentRepository(IDbContextFactory<ContentContext> contentContextFactory) => this.contentContextFactory = contentContextFactory;
 
         /// <summary>
         /// Add async.
@@ -37,7 +37,7 @@ namespace Content.Service.Repositories
                     throw new ArgumentNullException(nameof(content));
                 }
 
-                context.Content.Add(content);
+                context.Contents.Add(content);
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
                 return await Task.FromResult(content).ConfigureAwait(false);
@@ -54,9 +54,9 @@ namespace Content.Service.Repositories
         {
             using (var context = this.contentContextFactory.CreateDbContext())
             {
-                if (context.Content.Any(item => item.ContentId == content.ContentId))
+                if (context.Contents.Any(item => item.ContentId == content.ContentId))
                 {
-                    context.Content.Remove(content);
+                    context.Contents.Remove(content);
                 }
 
                 return await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -73,8 +73,9 @@ namespace Content.Service.Repositories
             ContentOptionFilter contentOptionFilter,
             CancellationToken cancellationToken) =>
             Task.FromResult(this.contentContextFactory.CreateDbContext()
-                .Content
-                .OrderBy(x => x.Created)
+                .Contents
+                .OrderBy(x => x.ModifiedDate)
+                .ThenBy(x => x.CreatedDate)
                 .If<Models.Content>(contentOptionFilter.ContentId.HasValue, x => x.Where(y => y.ContentId == contentOptionFilter.ContentId))
                 .If<Models.Content>(contentOptionFilter.PageId.HasValue, x => x.Where(y => y.PageId == contentOptionFilter.PageId))
                 .If<Models.Content>(contentOptionFilter.BookId.HasValue, x => x.Where(y => y.BookId == contentOptionFilter.BookId))
@@ -85,7 +86,7 @@ namespace Content.Service.Repositories
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An id.</returns>
-        public Task<int> GetTotalCountAsync(CancellationToken cancellationToken) => Task.FromResult(this.contentContextFactory.CreateDbContext().Content.Count());
+        public Task<int> GetTotalCountAsync(CancellationToken cancellationToken) => Task.FromResult(this.contentContextFactory.CreateDbContext().Contents.Count());
 
         /// <summary>
         /// Update async.
@@ -102,7 +103,7 @@ namespace Content.Service.Repositories
                     throw new ArgumentNullException(nameof(content));
                 }
 
-                var existingContent = context.Content.FirstOrDefault(x => x.ContentId == content.ContentId);
+                var existingContent = context.Contents.FirstOrDefault(x => x.ContentId == content.ContentId);
                 if (existingContent is null)
                 {
                     throw new NotSupportedException($"The content does not exist in the database {nameof(content)}");

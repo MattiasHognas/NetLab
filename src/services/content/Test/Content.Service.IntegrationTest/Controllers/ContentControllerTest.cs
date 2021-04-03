@@ -167,7 +167,7 @@ namespace Content.Service.IntegrationTest.Controllers
                 PageId = 1,
                 BookId = 1,
             };
-            var content = new List<Models.Content> { new Models.Content { ContentId = 1, Modified = new DateTimeOffset(2000, 1, 2, 3, 4, 5, TimeSpan.FromHours(6)) } };
+            var content = new List<Models.Content> { new Models.Content { ContentId = 1, ModifiedDate = new DateTimeOffset(2000, 1, 2, 3, 4, 5, TimeSpan.FromHours(6)) } };
             this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
             var uriString = AddQueryString("/content", filters);
             var response = await this.client.GetAsync(new Uri(uriString, UriKind.Relative)).ConfigureAwait(false);
@@ -225,7 +225,7 @@ namespace Content.Service.IntegrationTest.Controllers
                 PageId = 1,
                 BookId = 1,
             };
-            var content = new List<Models.Content> { new Models.Content() { Modified = new DateTimeOffset(2000, 1, 1, 0, 0, 1, TimeSpan.Zero) } };
+            var content = new List<Models.Content> { new Models.Content() { ModifiedDate = new DateTimeOffset(2000, 1, 1, 0, 0, 1, TimeSpan.Zero) } };
             this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
             var uriString = AddQueryString("/content", filters);
             using var request = new HttpRequestMessage(HttpMethod.Get, uriString);

@@ -7,6 +7,7 @@ namespace Content.Service
     using Content.Service.Repositories;
     using Content.Service.Services;
     using Content.Service.ViewModels;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
@@ -26,11 +27,11 @@ namespace Content.Service
         /// <returns>The services with commands added.</returns>
         public static IServiceCollection AddProjectCommands(this IServiceCollection services) =>
             services
-                .AddScoped<DeleteContentCommand>()
-                .AddScoped<GetContentCommand>()
-                .AddScoped<PatchContentCommand>()
-                .AddScoped<PostContentCommand>()
-                .AddScoped<PutContentCommand>();
+                .AddSingleton<DeleteContentCommand>()
+                .AddSingleton<GetContentCommand>()
+                .AddSingleton<PatchContentCommand>()
+                .AddSingleton<PostContentCommand>()
+                .AddSingleton<PutContentCommand>();
 
         /// <summary>
         /// Adds mapping middlewares to the service collection.
@@ -51,7 +52,7 @@ namespace Content.Service
         /// <returns>The services with repositories added.</returns>
         public static IServiceCollection AddProjectRepositories(this IServiceCollection services) =>
             services
-                .AddScoped<IContentRepository, ContentRepository>();
+                .AddSingleton<IContentRepository, ContentRepository>();
 
         /// <summary>
         /// Adds service middlewares to the service collection.
@@ -66,9 +67,10 @@ namespace Content.Service
         /// Adds context middlewares to the service collection.
         /// </summary>
         /// <param name="services">The services.</param>
-        /// <returns>The services with contexts added.</returns>
+        /// <returns>The services with database contexts added.</returns>
         public static IServiceCollection AddProjectContexts(this IServiceCollection services) =>
             services
-                .AddScoped<ContentsContext>();
+                .AddDbContextFactory<ContentContext>(options => options.UseInMemoryDatabase("Content"), ServiceLifetime.Singleton)
+                .AddTransient(serviceProvider => serviceProvider.GetRequiredService<IDbContextFactory<ContentContext>>().CreateDbContext());
     }
 }
