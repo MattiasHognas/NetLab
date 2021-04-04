@@ -75,7 +75,8 @@ namespace Workspace.Service
         /// <returns>The services with service services added.</returns>
         public static IServiceCollection AddProjectServices(this IServiceCollection services) =>
             services
-                .AddSingleton<IClockService, ClockService>();
+                .AddSingleton<IClockService, ClockService>()
+                .AddSingleton<IPrincipalService, PrincipalService>();
 
         /// <summary>
         /// Adds context middlewares to the service collection.
