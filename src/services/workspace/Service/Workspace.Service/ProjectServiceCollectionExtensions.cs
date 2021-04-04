@@ -33,12 +33,10 @@ namespace Workspace.Service
             services
                 .AddSingleton<DeleteBookCommand>()
                 .AddSingleton<GetBookCommand>()
-                .AddSingleton<PatchBookCommand>()
                 .AddSingleton<PostBookCommand>()
                 .AddSingleton<PutBookCommand>()
                 .AddSingleton<DeletePageCommand>()
                 .AddSingleton<GetPageCommand>()
-                .AddSingleton<PatchPageCommand>()
                 .AddSingleton<PostPageCommand>()
                 .AddSingleton<PutPageCommand>();
 

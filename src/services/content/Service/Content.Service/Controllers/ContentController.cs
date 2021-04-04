@@ -7,9 +7,7 @@ namespace Content.Service.Controllers
     using Content.Service.Constants;
     using Content.Service.ViewModels;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Net.Http.Headers;
     using Swashbuckle.AspNetCore.Annotations;
 
     /// <summary>

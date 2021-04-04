@@ -22,9 +22,10 @@ NOT YET IMPLEMENTED
 
 ### Features to add
 
-- Add database to workspace service
-- Add database to content service
+- Test database to workspace service
+- Test database to content service
 - Add authentication service
+- Add database to authentication service
 - Add jwt validation to services
 - Add web frontend
 - Add SignalR to web frontend

@@ -33,7 +33,6 @@ namespace Content.Service
             services
                 .AddSingleton<DeleteContentCommand>()
                 .AddSingleton<GetContentCommand>()
-                .AddSingleton<PatchContentCommand>()
                 .AddSingleton<PostContentCommand>()
                 .AddSingleton<PutContentCommand>();
 
