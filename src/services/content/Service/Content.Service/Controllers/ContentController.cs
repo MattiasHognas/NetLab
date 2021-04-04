@@ -24,44 +24,6 @@ namespace Content.Service.Controllers
     public class ContentController : ControllerBase
     {
         /// <summary>
-        /// Returns an Allow HTTP header with the allowed HTTP methods.
-        /// </summary>
-        /// <returns>A 200 OK response.</returns>
-        [HttpOptions(Name = ContentControllerRoute.OptionsContents)]
-        [SwaggerResponse(StatusCodes.Status200OK, "The allowed HTTP methods.")]
-        public IActionResult Options()
-        {
-            this.HttpContext.Response.Headers.AppendCommaSeparatedValues(
-                HeaderNames.Allow,
-                HttpMethods.Get,
-                HttpMethods.Post,
-                HttpMethods.Head,
-                HttpMethods.Options);
-            return this.Ok();
-        }
-
-        /// <summary>
-        /// Returns an Allow HTTP header with the allowed HTTP methods for a content with a specified id.
-        /// </summary>
-        /// <param name="contentId">The content id.</param>
-        /// <returns>A 200 OK response.</returns>
-        [HttpOptions("{contentId}", Name = ContentControllerRoute.OptionsContent)]
-        [SwaggerResponse(StatusCodes.Status200OK, "The allowed HTTP methods.")]
-#pragma warning disable IDE0060, CA1801 // Remove unused parameter
-        public IActionResult Options(int contentId)
-#pragma warning restore IDE0060, CA1801 // Remove unused parameter
-        {
-            this.HttpContext.Response.Headers.AppendCommaSeparatedValues(
-                HeaderNames.Allow,
-                HttpMethods.Delete,
-                HttpMethods.Head,
-                HttpMethods.Options,
-                HttpMethods.Patch,
-                HttpMethods.Put);
-            return this.Ok();
-        }
-
-        /// <summary>
         /// Deletes the content with the specified id.
         /// </summary>
         /// <param name="command">The action command.</param>
@@ -96,27 +58,6 @@ namespace Content.Service.Controllers
             [FromServices] GetContentCommand command,
             [FromQuery] ContentOptionFilter contentOptionFilter,
             CancellationToken cancellationToken) => command.ExecuteAsync(contentOptionFilter, cancellationToken);
-
-        /// <summary>
-        /// Patches the content with the specified id.
-        /// </summary>
-        /// <param name="command">The action command.</param>
-        /// <param name="contentId">The content id.</param>
-        /// <param name="patch">The patch document. See http://jsonpatch.com.</param>
-        /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 200 OK if the content was patched, a 400 Bad Request if the patch was invalid or a 404 Not Found
-        /// if a content with the specified id was not found.</returns>
-        [HttpPatch("{contentId}", Name = ContentControllerRoute.PatchContent)]
-        [SwaggerResponse(StatusCodes.Status200OK, "The patched content with the specified id.", typeof(Content))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "The patch document is invalid.", typeof(ProblemDetails))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "A content with the specified id could not be found.", typeof(ProblemDetails))]
-        [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
-        [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
-        public Task<IActionResult> PatchAsync(
-            [FromServices] PatchContentCommand command,
-            ulong contentId,
-            [FromBody] JsonPatchDocument<SaveContent> patch,
-            CancellationToken cancellationToken) => command.ExecuteAsync(contentId, patch, cancellationToken);
 
         /// <summary>
         /// Creates a new content.

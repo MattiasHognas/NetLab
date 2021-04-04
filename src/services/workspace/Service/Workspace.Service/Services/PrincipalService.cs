@@ -19,6 +19,6 @@ namespace Workspace.Service.Services
         /// <summary>
         /// Gets the name identifier.
         /// </summary>
-        public string NameIdentifier => this.httpContextAccessor.HttpContext!.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        public string NameIdentifier => this.httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0";
     }
 }
