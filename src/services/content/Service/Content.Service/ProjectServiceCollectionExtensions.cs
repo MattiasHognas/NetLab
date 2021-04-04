@@ -9,6 +9,7 @@ namespace Content.Service
     using Content.Service.Services;
     using Content.Service.ViewModels;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Data.Sqlite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -83,7 +84,9 @@ namespace Content.Service
                     services => services.AddDbContextFactory<ContentContext>(
                         options =>
                         {
-                            options.UseInMemoryDatabase("Content");
+                            var inMemorySqlite = new SqliteConnection("Data Source=:memory:");
+                            inMemorySqlite.Open();
+                            options.UseSqlite(inMemorySqlite);
                             options.UseLazyLoadingProxies();
                         },
                         ServiceLifetime.Singleton),

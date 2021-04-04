@@ -3,6 +3,7 @@ namespace Workspace.Service
     using Boxed.AspNetCore;
     using Boxed.Mapping;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Data.Sqlite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -92,7 +93,9 @@ namespace Workspace.Service
                     services => services.AddDbContextFactory<WorkspaceContext>(
                         options =>
                         {
-                            options.UseInMemoryDatabase("Workspace");
+                            var inMemorySqlite = new SqliteConnection("Data Source=:memory:");
+                            inMemorySqlite.Open();
+                            options.UseSqlite(inMemorySqlite);
                             options.UseLazyLoadingProxies(true);
                         },
                         ServiceLifetime.Singleton),

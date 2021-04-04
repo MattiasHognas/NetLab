@@ -31,6 +31,8 @@ namespace Workspace.Service.Data
         {
             this.principalService = principalService;
             this.clockService = clockService;
+            // Database.EnsureCreated();
+            // Database.Migrate();
         }
 
         /// <summary>
