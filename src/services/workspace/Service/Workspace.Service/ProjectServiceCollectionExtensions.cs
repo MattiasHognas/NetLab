@@ -1,8 +1,12 @@
 namespace Workspace.Service
 {
+    using Boxed.AspNetCore;
     using Boxed.Mapping;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Workspace.Service.Commands;
     using Workspace.Service.Data;
     using Workspace.Service.Mappers;
@@ -77,10 +81,29 @@ namespace Workspace.Service
         /// Adds context middlewares to the service collection.
         /// </summary>
         /// <param name="services">The services.</param>
+        /// <param name="configuration">The application configuration, where key value pair settings are stored. See
+        /// http://docs.asp.net/en/latest/fundamentals/configuration.html.</param>
+        /// <param name="webHostEnvironment">The environment the application is running under. This can be Development,
+        /// Staging or Production by default. See http://docs.asp.net/en/latest/fundamentals/environments.html.</param>
         /// <returns>The services with contexts added.</returns>
-        public static IServiceCollection AddProjectContexts(this IServiceCollection services) =>
+        public static IServiceCollection AddProjectContexts(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment) =>
             services
-                .AddDbContextFactory<WorkspaceContext>(options => options.UseInMemoryDatabase("Workspace"), ServiceLifetime.Singleton)
+                .AddIfElse(
+                    webHostEnvironment.IsDevelopment() || webHostEnvironment.IsEnvironment("Test"),
+                    services => services.AddDbContextFactory<WorkspaceContext>(
+                        options =>
+                        {
+                            options.UseInMemoryDatabase("Workspace");
+                            options.UseLazyLoadingProxies(true);
+                        },
+                        ServiceLifetime.Singleton),
+                    services => services.AddDbContextFactory<WorkspaceContext>(
+                        options =>
+                        {
+                            options.UseSqlServer(configuration.GetConnectionString("ServiceConnection"));
+                            options.UseLazyLoadingProxies(true);
+                        },
+                        ServiceLifetime.Singleton))
                 .AddTransient(serviceProvider => serviceProvider.GetRequiredService<IDbContextFactory<WorkspaceContext>>().CreateDbContext());
     }
 }

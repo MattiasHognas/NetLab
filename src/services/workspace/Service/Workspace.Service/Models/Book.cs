@@ -8,14 +8,6 @@
     public class Book : BaseEntity
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Book"/> class.
-        /// </summary>
-        public Book()
-        {
-            this.Pages = new HashSet<Page>();
-        }
-
-        /// <summary>
         /// Gets or sets the book id.
         /// </summary>
         public ulong BookId { get; set; }
@@ -31,8 +23,8 @@
         public string Description { get; set; } = default!;
 
         /// <summary>
-        /// Gets or sets the pages.
+        /// Gets the pages.
         /// </summary>
-        public virtual ICollection<Page> Pages { get; private set; }
+        public virtual ICollection<Page> Pages { get; private set; } = new HashSet<Page>();
     }
 }

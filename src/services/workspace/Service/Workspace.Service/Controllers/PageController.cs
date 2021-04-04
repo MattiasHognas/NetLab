@@ -4,9 +4,7 @@ namespace Workspace.Service.Controllers
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Net.Http.Headers;
     using Swashbuckle.AspNetCore.Annotations;
     using Workspace.Service.Commands;
     using Workspace.Service.Constants;
@@ -23,44 +21,6 @@ namespace Workspace.Service.Controllers
 #pragma warning disable CA1062 // Validate arguments of public methods
     public class PageController : ControllerBase
     {
-        /// <summary>
-        /// Returns an Allow HTTP header with the allowed HTTP methods.
-        /// </summary>
-        /// <returns>A 200 OK response.</returns>
-        [HttpOptions(Name = PageControllerRoute.OptionsPages)]
-        [SwaggerResponse(StatusCodes.Status200OK, "The allowed HTTP methods.")]
-        public IActionResult Options()
-        {
-            this.HttpContext.Response.Headers.AppendCommaSeparatedValues(
-                HeaderNames.Allow,
-                HttpMethods.Get,
-                HttpMethods.Post,
-                HttpMethods.Head,
-                HttpMethods.Options,
-                HttpMethods.Patch);
-            return this.Ok();
-        }
-
-        /// <summary>
-        /// Returns an Allow HTTP header with the allowed HTTP methods for a page with a specified id.
-        /// </summary>
-        /// <param name="pageId">The page id.</param>
-        /// <returns>A 200 OK response.</returns>
-        [HttpOptions("{pageId}", Name = PageControllerRoute.OptionsPage)]
-        [SwaggerResponse(StatusCodes.Status200OK, "The allowed HTTP methods.")]
-#pragma warning disable IDE0060, CA1801 // Remove unused parameter
-        public IActionResult Options(int pageId)
-#pragma warning restore IDE0060, CA1801 // Remove unused parameter
-        {
-            this.HttpContext.Response.Headers.AppendCommaSeparatedValues(
-                HeaderNames.Allow,
-                HttpMethods.Delete,
-                HttpMethods.Head,
-                HttpMethods.Options,
-                HttpMethods.Put);
-            return this.Ok();
-        }
-
         /// <summary>
         /// Deletes the page with the specified id.
         /// </summary>
@@ -96,27 +56,6 @@ namespace Workspace.Service.Controllers
             [FromServices] GetPageCommand command,
             [FromQuery] PageOptionFilter pageOptionFilter,
             CancellationToken cancellationToken) => command.ExecuteAsync(pageOptionFilter, cancellationToken);
-
-        /// <summary>
-        /// Patches the page with the specified id.
-        /// </summary>
-        /// <param name="command">The action command.</param>
-        /// <param name="pageOptionFilter">The page option filter.</param>
-        /// <param name="patch">The patch document. See http://jsonpatch.com.</param>
-        /// <param name="cancellationToken">The cancellation token used to cancel the HTTP request.</param>
-        /// <returns>A 200 OK if the page was patched, a 400 Bad Request if the patch was invalid or a 404 Not Found
-        /// if a page with the specified id was not found.</returns>
-        [HttpPatch(Name = PageControllerRoute.PatchPage)]
-        [SwaggerResponse(StatusCodes.Status200OK, "The patched page with the specified id.", typeof(Page))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "The patch document is invalid.", typeof(ProblemDetails))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "A page with the specified id could not be found.", typeof(ProblemDetails))]
-        [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
-        [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
-        public Task<IActionResult> PatchAsync(
-            [FromServices] PatchPageCommand command,
-            [FromQuery] PageOptionFilter pageOptionFilter,
-            [FromBody] JsonPatchDocument<SavePage> patch,
-            CancellationToken cancellationToken) => command.ExecuteAsync(pageOptionFilter, patch, cancellationToken);
 
         /// <summary>
         /// Creates a new page.

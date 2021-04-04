@@ -2,7 +2,6 @@ namespace Workspace.Service.Mappers
 {
     using System;
     using Boxed.Mapping;
-    using Workspace.Service.Services;
     using Workspace.Service.ViewModels;
 
     /// <summary>
@@ -10,15 +9,6 @@ namespace Workspace.Service.Mappers
     /// </summary>
     public class BookToSaveBookMapper : IMapper<Models.Book, SaveBook>, IMapper<SaveBook, Models.Book>
     {
-        private readonly IClockService clockService;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BookToSaveBookMapper"/> class.
-        /// </summary>
-        /// <param name="clockService">The clock service.</param>
-        public BookToSaveBookMapper(IClockService clockService) =>
-            this.clockService = clockService;
-
         /// <summary>
         /// Map book model to save book viewmodel.
         /// </summary>

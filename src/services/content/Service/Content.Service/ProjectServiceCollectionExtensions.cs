@@ -1,5 +1,6 @@
 namespace Content.Service
 {
+    using Boxed.AspNetCore;
     using Boxed.Mapping;
     using Content.Service.Commands;
     using Content.Service.Data;
@@ -7,8 +8,11 @@ namespace Content.Service
     using Content.Service.Repositories;
     using Content.Service.Services;
     using Content.Service.ViewModels;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
 
     /// <summary>
     /// <see cref="IServiceCollection"/> extension methods add project services.
@@ -61,16 +65,36 @@ namespace Content.Service
         /// <returns>The services with service services added.</returns>
         public static IServiceCollection AddProjectServices(this IServiceCollection services) =>
             services
-                .AddSingleton<IClockService, ClockService>();
+                .AddSingleton<IClockService, ClockService>()
+                .AddSingleton<IPrincipalService, PrincipalService>();
 
         /// <summary>
         /// Adds context middlewares to the service collection.
         /// </summary>
         /// <param name="services">The services.</param>
+        /// <param name="configuration">The application configuration, where key value pair settings are stored. See
+        /// http://docs.asp.net/en/latest/fundamentals/configuration.html.</param>
+        /// <param name="webHostEnvironment">The environment the application is running under. This can be Development,
+        /// Staging or Production by default. See http://docs.asp.net/en/latest/fundamentals/environments.html.</param>
         /// <returns>The services with database contexts added.</returns>
-        public static IServiceCollection AddProjectContexts(this IServiceCollection services) =>
+        public static IServiceCollection AddProjectContexts(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment) =>
             services
-                .AddDbContextFactory<ContentContext>(options => options.UseInMemoryDatabase("Content"), ServiceLifetime.Singleton)
+                .AddIfElse(
+                    webHostEnvironment.IsDevelopment() || webHostEnvironment.IsEnvironment("Test"),
+                    services => services.AddDbContextFactory<ContentContext>(
+                        options =>
+                        {
+                            options.UseInMemoryDatabase("Content");
+                            options.UseLazyLoadingProxies();
+                        },
+                        ServiceLifetime.Singleton),
+                    services => services.AddDbContextFactory<ContentContext>(
+                        options =>
+                        {
+                            options.UseSqlServer(configuration.GetConnectionString("ServiceConnection"));
+                            options.UseLazyLoadingProxies();
+                        },
+                        ServiceLifetime.Singleton))
                 .AddTransient(serviceProvider => serviceProvider.GetRequiredService<IDbContextFactory<ContentContext>>().CreateDbContext());
     }
 }

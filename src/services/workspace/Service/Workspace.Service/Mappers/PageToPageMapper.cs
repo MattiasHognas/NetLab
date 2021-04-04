@@ -12,22 +12,18 @@ namespace Workspace.Service.Mappers
     /// </summary>
     public class PageToPageMapper : IMapper<Models.Page, Page>
     {
-        private readonly IMapper<Models.Book, Book> bookToBookMapper;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly LinkGenerator linkGenerator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PageToPageMapper"/> class.
         /// </summary>
-        /// <param name="bookToBookMapper">The book to book mapper.</param>
         /// <param name="httpContextAccessor">The http context accessor.</param>
         /// <param name="linkGenerator">The link generator.</param>
         public PageToPageMapper(
-            IMapper<Models.Book, Book> bookToBookMapper,
             IHttpContextAccessor httpContextAccessor,
             LinkGenerator linkGenerator)
         {
-            this.bookToBookMapper = bookToBookMapper;
             this.httpContextAccessor = httpContextAccessor;
             this.linkGenerator = linkGenerator;
         }
@@ -50,7 +46,7 @@ namespace Workspace.Service.Mappers
             }
 
             destination.PageId = source.PageId;
-            destination.BookId = source.Book.BookId;
+            destination.BookId = source.BookId;
             destination.Name = source.Name;
             destination.Description = source.Description;
             destination.Url = new Uri(this.linkGenerator.GetUriByRouteValues(

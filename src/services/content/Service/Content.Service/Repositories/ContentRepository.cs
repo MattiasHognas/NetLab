@@ -40,7 +40,7 @@ namespace Content.Service.Repositories
                 context.Contents.Add(content);
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                return await Task.FromResult(content).ConfigureAwait(false);
+                return content;
             }
         }
 
@@ -113,7 +113,7 @@ namespace Content.Service.Repositories
 
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                return await Task.FromResult(content).ConfigureAwait(false);
+                return content;
             }
         }
     }

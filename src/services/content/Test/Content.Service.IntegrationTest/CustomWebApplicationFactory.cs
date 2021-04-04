@@ -1,5 +1,6 @@
 namespace Content.Service.IntegrationTest
 {
+    using System;
     using System.Net.Http;
     using Content.Service.Options;
     using Content.Service.Repositories;
@@ -32,7 +33,9 @@ namespace Content.Service.IntegrationTest
 
         public Mock<IClockService> ClockServiceMock { get; } = new Mock<IClockService>(MockBehavior.Strict);
 
-        public void VerifyAllMocks() => Mock.VerifyAll(this.ContentRepositoryMock, this.ClockServiceMock);
+        public Mock<IPrincipalService> PrincipalServiceMock { get; } = new Mock<IPrincipalService>(MockBehavior.Strict);
+
+        public void VerifyAllMocks() => Mock.VerifyAll(this.ContentRepositoryMock, this.ClockServiceMock, this.PrincipalServiceMock);
 
         protected override void ConfigureClient(HttpClient client)
         {
@@ -50,10 +53,15 @@ namespace Content.Service.IntegrationTest
                 .UseEnvironment("Test")
                 .ConfigureServices(this.ConfigureServices);
 
-        protected virtual void ConfigureServices(IServiceCollection services) =>
+        protected virtual void ConfigureServices(IServiceCollection services)
+        {
+            this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            this.PrincipalServiceMock.SetupGet(x => x.NameIdentifier).Returns("1");
             services
                 .AddSingleton(this.ContentRepositoryMock.Object)
-                .AddSingleton(this.ClockServiceMock.Object);
+                .AddSingleton(this.ClockServiceMock.Object)
+                .AddSingleton(this.PrincipalServiceMock.Object);
+        }
 
         protected override void Dispose(bool disposing)
         {

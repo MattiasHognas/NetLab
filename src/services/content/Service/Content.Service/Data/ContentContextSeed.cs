@@ -22,24 +22,21 @@ namespace Content.Service.Data
                 {
                     new Content()
                     {
-                        ContentId = 1,
                         PageId = 1,
                         BookId = 1,
                         Value = "x",
                     },
                     new Content()
                     {
-                        ContentId = 2,
                         PageId = 1,
                         BookId = 1,
-                        Value = "x",
+                        Value = "y",
                     },
                     new Content()
                     {
-                        ContentId = 3,
                         PageId = 1,
                         BookId = 1,
-                        Value = "x",
+                        Value = "z",
                     },
                 };
                 contentContext.Contents.AddRange(contents);

@@ -1,6 +1,5 @@
 namespace Workspace.Service.Data
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Workspace.Service.Models;
@@ -23,19 +22,16 @@ namespace Workspace.Service.Data
                 {
                     new Book()
                     {
-                        BookId = 1,
                         Name = "x",
                         Description = "x",
                     },
                     new Book()
                     {
-                        BookId = 2,
                         Name = "y",
                         Description = "y",
                     },
                     new Book()
                     {
-                        BookId = 3,
                         Name = "z",
                         Description = "z",
                     },
@@ -49,21 +45,18 @@ namespace Workspace.Service.Data
                 {
                     new Page()
                     {
-                        PageId = 1,
                         BookId = 1,
                         Name = "x",
                         Description = "x",
                     },
                     new Page()
                     {
-                        PageId = 2,
                         BookId = 1,
                         Name = "y",
                         Description = "y",
                     },
                     new Page()
                     {
-                        PageId = 3,
                         BookId = 1,
                         Name = "z",
                         Description = "z",

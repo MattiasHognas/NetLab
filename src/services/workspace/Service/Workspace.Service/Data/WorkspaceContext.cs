@@ -3,8 +3,8 @@ namespace Workspace.Service.Data
     using System;
     using System.Globalization;
     using System.Linq;
-    using System.Security.Claims;
-    using Microsoft.AspNetCore.Http;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Workspace.Service.Models;
     using Workspace.Service.Services;
@@ -14,22 +14,22 @@ namespace Workspace.Service.Data
     /// </summary>
     public class WorkspaceContext : DbContext
     {
-        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IPrincipalService principalService;
         private readonly IClockService clockService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WorkspaceContext"/> class.
         /// </summary>
         /// <param name="options">The workspace context options.</param>
-        /// <param name="httpContextAccessor">The http context accessor.</param>
+        /// <param name="principalService">The principal service.</param>
         /// <param name="clockService">The clock service.</param>
         public WorkspaceContext(
             DbContextOptions<WorkspaceContext> options,
-            IHttpContextAccessor httpContextAccessor,
+            IPrincipalService principalService,
             IClockService clockService)
             : base(options)
         {
-            this.httpContextAccessor = httpContextAccessor;
+            this.principalService = principalService;
             this.clockService = clockService;
         }
 
@@ -46,28 +46,64 @@ namespace Workspace.Service.Data
         /// <summary>
         /// Saves the changes.
         /// </summary>
+        /// <returns>The result.</returns>
         public override int SaveChanges()
         {
             this.AddTimestamps();
             return base.SaveChanges();
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+        /// <summary>
+        /// Saves the changes.
+        /// </summary>
+        /// <param name="acceptAllChangesOnSuccess">Accept all changes on success.</param>
+        /// <returns>The result.</returns>
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            this.AddTimestamps();
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        /// <summary>
+        /// Saves the changes async.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The result.</returns>
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            this.AddTimestamps();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Event on model creating.
+        /// </summary>
+        /// <param name="modelBuilder">The model binder.</param>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Book>()
+                .HasKey(b => b.BookId);
+            modelBuilder.Entity<Book>()
+                .HasMany(b => b.Pages)
+                .WithOne(p => p.Book)
+                .HasForeignKey(p => p.BookId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Page>()
+                .HasKey(p => p.PageId);
             modelBuilder.Entity<Page>()
                 .HasOne(p => p.Book)
                 .WithMany(b => b.Pages);
+        }
 
         private void AddTimestamps()
         {
-            var entities = this.ChangeTracker
-                .Entries()
-                .Where(x => x.Entity is BaseEntity && (x.State == EntityState.Added || x.State == EntityState.Modified));
-
-            var userId = this.httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
+            var entities = this.ChangeTracker.Entries().Where(x => x.Entity is BaseEntity && (x.State == EntityState.Added || x.State == EntityState.Modified));
             var currentDate = this.clockService.UtcNow;
-            var currentUserId = !string.IsNullOrEmpty(userId)
-                ? Convert.ToUInt64(userId, CultureInfo.InvariantCulture)
+            var nameIdentifier = this.principalService.NameIdentifier;
+            var currentUserId = !string.IsNullOrEmpty(nameIdentifier)
+                ? Convert.ToUInt64(nameIdentifier, CultureInfo.InvariantCulture)
                 : 0;
 
             foreach (var entity in entities)

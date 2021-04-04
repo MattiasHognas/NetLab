@@ -8,16 +8,13 @@ namespace Workspace.Service.IntegrationTest.Controllers
     using System.Net.Http;
     using System.Net.Http.Formatting;
     using System.Net.Http.Headers;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Boxed.AspNetCore;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.WebUtilities;
     using Moq;
-    using Newtonsoft.Json;
     using Workspace.Service.ViewModels;
     using Xunit;
     using Xunit.Abstractions;
@@ -34,50 +31,6 @@ namespace Workspace.Service.IntegrationTest.Controllers
             this.formatters = new MediaTypeFormatterCollection();
             this.formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue(ContentType.RestfulJson));
             this.formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue(ContentType.ProblemJson));
-        }
-
-        [Fact]
-        public async Task Options_Filter_Returns200OkAsync()
-        {
-            var filters = new Models.BookOptionFilter
-            {
-                BookId = 1,
-            };
-            var uriString = AddQueryString("book", filters);
-            using var request = new HttpRequestMessage(HttpMethod.Options, uriString);
-
-            var response = await this.client.SendAsync(request).ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(
-                new string[]
-                {
-                    HttpMethods.Get,
-                    HttpMethods.Post,
-                    HttpMethods.Head,
-                    HttpMethods.Options,
-                },
-                response.Content.Headers.Allow);
-        }
-
-        [Fact]
-        public async Task Options_BookId_Returns200OkAsync()
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Options, "book/1");
-
-            var response = await this.client.SendAsync(request).ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(
-                new string[]
-                {
-                    HttpMethods.Delete,
-                    HttpMethods.Head,
-                    HttpMethods.Options,
-                    HttpMethods.Patch,
-                    HttpMethods.Put,
-                },
-                response.Content.Headers.Allow);
         }
 
         [Fact]
@@ -245,7 +198,6 @@ namespace Workspace.Service.IntegrationTest.Controllers
                 Description = "x",
             };
             var book = new Models.Book() { BookId = 1 };
-            this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
             this.BookRepositoryMock
                 .Setup(x => x.AddAsync(It.IsAny<Models.Book>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(book);
@@ -315,7 +267,6 @@ namespace Workspace.Service.IntegrationTest.Controllers
             this.BookRepositoryMock
                 .Setup(x => x.GetAsync(It.IsAny<Models.BookOptionFilter>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(book);
-            this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
             this.BookRepositoryMock.Setup(x => x.UpdateAsync(book.First(), It.IsAny<CancellationToken>())).ReturnsAsync(book.First());
 
             var response = await this.client.PutAsJsonAsync("book/1", saveBook).ConfigureAwait(false);
@@ -356,78 +307,6 @@ namespace Workspace.Service.IntegrationTest.Controllers
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             var problemDetails = await response.Content.ReadAsAsync<ProblemDetails>(this.formatters).ConfigureAwait(false);
             Assert.Equal(StatusCodes.Status400BadRequest, problemDetails.Status);
-        }
-
-        [Fact]
-        public async Task PatchBook_BookNotFound_Returns404NotFoundAsync()
-        {
-            var filters = new Models.BookOptionFilter
-            {
-                BookId = 999,
-            };
-            var book = new List<Models.Book>();
-            var patch = new JsonPatchDocument<SaveBook>();
-            patch.Remove(x => x.Name);
-            var json = JsonConvert.SerializeObject(patch);
-            using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            this.BookRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.BookOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(book);
-
-            var response = await this.client
-                .PatchAsync(new Uri("book/999", UriKind.Relative), strcontent)
-                .ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-            var problemDetails = await response.Content.ReadAsAsync<ProblemDetails>(this.formatters).ConfigureAwait(false);
-            Assert.Equal(StatusCodes.Status404NotFound, problemDetails.Status);
-        }
-
-        [Fact]
-        public async Task PatchBook_InvalidBook_Returns400BadRequestAsync()
-        {
-            var filters = new Models.BookOptionFilter
-            {
-                BookId = 1,
-            };
-            var book = new List<Models.Book>
-            {
-                new Models.Book { BookId = 1 },
-            };
-            var patch = new JsonPatchDocument<SaveBook>();
-            patch.Remove(x => x.Name);
-            var json = JsonConvert.SerializeObject(patch);
-            using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            this.BookRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.BookOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(book);
-
-            var response = await this.client
-                .PatchAsync(new Uri("book/1", UriKind.Relative), strcontent)
-                .ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task PatchBook_ValidBook_Returns200OkAsync()
-        {
-            var filters = new Models.BookOptionFilter
-            {
-                BookId = 1,
-            };
-            var patch = new JsonPatchDocument<SaveBook>();
-            patch.Add(x => x.Name, "x");
-            var json = JsonConvert.SerializeObject(patch);
-            using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            var book = new List<Models.Book> { new Models.Book() { BookId = 1, Name = "x", Description = "x" } };
-            this.BookRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.BookOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(book);
-            this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
-            this.BookRepositoryMock.Setup(x => x.UpdateAsync(book.First(), It.IsAny<CancellationToken>())).ReturnsAsync(book.First());
-
-            var response = await this.client
-                .PatchAsync(new Uri("book/1", UriKind.Relative), strcontent)
-                .ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var bookViewModel = await response.Content.ReadAsAsync<Book>(this.formatters).ConfigureAwait(false);
-            Assert.Equal("x", bookViewModel.Name);
         }
 
         private static string AddQueryString(string uriString, Models.BookOptionFilter filters)

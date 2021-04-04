@@ -4,9 +4,7 @@ namespace Workspace.Service.Controllers
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Net.Http.Headers;
     using Swashbuckle.AspNetCore.Annotations;
     using Workspace.Service.Commands;
     using Workspace.Service.Constants;

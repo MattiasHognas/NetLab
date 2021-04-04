@@ -17,7 +17,7 @@ namespace Workspace.Service.Repositories
         private readonly IDbContextFactory<WorkspaceContext> workspaceContextFactory;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BookRepository"/> class.
+        /// Initializes a new instance of the <see cref="PageRepository"/> class.
         /// </summary>
         /// <param name="workspaceContextFactory">The content context factory.</param>
         public PageRepository(IDbContextFactory<WorkspaceContext> workspaceContextFactory) => this.workspaceContextFactory = workspaceContextFactory;
@@ -28,7 +28,7 @@ namespace Workspace.Service.Repositories
         /// <param name="page">The page.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A page.</returns>
-        public Task<Page> AddAsync(Page page, CancellationToken cancellationToken)
+        public async Task<Page> AddAsync(Page page, CancellationToken cancellationToken)
         {
             using (var context = this.workspaceContextFactory.CreateDbContext())
             {
@@ -38,8 +38,8 @@ namespace Workspace.Service.Repositories
                 }
 
                 context.Pages.Add(page);
-                page.PageId = context.Pages.Max(x => x.PageId) + 1;
-                return Task.FromResult(page);
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                return page;
             }
         }
 
@@ -49,7 +49,7 @@ namespace Workspace.Service.Repositories
         /// <param name="page">The page.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A completed task.</returns>
-        public Task DeleteAsync(Page page, CancellationToken cancellationToken)
+        public async Task DeleteAsync(Page page, CancellationToken cancellationToken)
         {
             using (var context = this.workspaceContextFactory.CreateDbContext())
             {
@@ -58,7 +58,7 @@ namespace Workspace.Service.Repositories
                     context.Pages.Remove(page);
                 }
 
-                return Task.CompletedTask;
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -80,20 +80,12 @@ namespace Workspace.Service.Repositories
                 .ToList());
 
         /// <summary>
-        /// Get total count async.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>An id.</returns>
-        public Task<int> GetTotalCountAsync(CancellationToken cancellationToken) =>
-            Task.FromResult(this.workspaceContextFactory.CreateDbContext().Pages.Count());
-
-        /// <summary>
         /// Update async.
         /// </summary>
         /// <param name="page">The page.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A page.</returns>
-        public Task<Page> UpdateAsync(Page page, CancellationToken cancellationToken)
+        public async Task<Page> UpdateAsync(Page page, CancellationToken cancellationToken)
         {
             using (var context = this.workspaceContextFactory.CreateDbContext())
             {
@@ -105,7 +97,8 @@ namespace Workspace.Service.Repositories
                 var existingPage = context.Pages.First(x => x.PageId == page.PageId);
                 existingPage.Name = page.Name;
                 existingPage.Description = page.Description;
-                return Task.FromResult(page);
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                return existingPage;
             }
         }
     }

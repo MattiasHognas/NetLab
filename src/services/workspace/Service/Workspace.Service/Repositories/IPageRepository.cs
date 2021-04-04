@@ -35,13 +35,6 @@ namespace Workspace.Service.Repositories
         Task<List<Page>> GetAsync(PageOptionFilter pageOptionFilter, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Get total count async.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>An id.</returns>
-        Task<int> GetTotalCountAsync(CancellationToken cancellationToken);
-
-        /// <summary>
         /// Update async.
         /// </summary>
         /// <param name="page">The page.</param>

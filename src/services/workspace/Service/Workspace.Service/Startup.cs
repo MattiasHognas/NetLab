@@ -60,7 +60,7 @@ namespace Workspace.Service
                 .AddProjectMappers()
                 .AddProjectRepositories()
                 .AddProjectServices()
-                .AddProjectContexts();
+                .AddProjectContexts(this.configuration, this.webHostEnvironment);
 
         /// <summary>
         /// Configures the application and HTTP request pipeline. Configure is called after ConfigureServices is
@@ -94,6 +94,7 @@ namespace Workspace.Service
                             .RequireCors(CorsPolicyName.AllowAny);
                     })
                 .UseSwagger()
-                .UseCustomSwaggerUI();
+                .UseCustomSwaggerUI()
+                .UseSeedDatabase();
     }
 }

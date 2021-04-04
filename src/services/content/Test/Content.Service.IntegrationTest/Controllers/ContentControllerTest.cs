@@ -8,17 +8,14 @@ namespace Content.Service.IntegrationTest.Controllers
     using System.Net.Http;
     using System.Net.Http.Formatting;
     using System.Net.Http.Headers;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Boxed.AspNetCore;
     using Content.Service.ViewModels;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.WebUtilities;
     using Moq;
-    using Newtonsoft.Json;
     using Xunit;
     using Xunit.Abstractions;
 
@@ -250,7 +247,6 @@ namespace Content.Service.IntegrationTest.Controllers
                 Value = "x",
             };
             var content = new Models.Content() { ContentId = 1 };
-            this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
             this.ContentRepositoryMock
                 .Setup(x => x.AddAsync(It.IsAny<Models.Content>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(content);
@@ -321,7 +317,6 @@ namespace Content.Service.IntegrationTest.Controllers
             this.ContentRepositoryMock
                 .Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(content);
-            this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
             this.ContentRepositoryMock.Setup(x => x.UpdateAsync(content.First(), It.IsAny<CancellationToken>())).ReturnsAsync(content.First());
 
             var response = await this.client.PutAsJsonAsync("content/1", saveContent).ConfigureAwait(false);
@@ -363,78 +358,6 @@ namespace Content.Service.IntegrationTest.Controllers
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             var problemDetails = await response.Content.ReadAsAsync<ProblemDetails>(this.formatters).ConfigureAwait(false);
             Assert.Equal(StatusCodes.Status400BadRequest, problemDetails.Status);
-        }
-
-        [Fact]
-        public async Task PatchContent_ContentNotFound_Returns404NotFoundAsync()
-        {
-            var filters = new Models.ContentOptionFilter
-            {
-                ContentId = 999,
-            };
-            var content = new List<Models.Content>();
-            var patch = new JsonPatchDocument<SaveContent>();
-            patch.Remove(x => x.Value);
-            var json = JsonConvert.SerializeObject(patch);
-            using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-
-            var response = await this.client
-                .PatchAsync(new Uri("content/999", UriKind.Relative), strcontent)
-                .ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-            var problemDetails = await response.Content.ReadAsAsync<ProblemDetails>(this.formatters).ConfigureAwait(false);
-            Assert.Equal(StatusCodes.Status404NotFound, problemDetails.Status);
-        }
-
-        [Fact]
-        public async Task PatchContent_InvalidContent_Returns400BadRequestAsync()
-        {
-            var filters = new Models.ContentOptionFilter
-            {
-                ContentId = 1,
-            };
-            var content = new List<Models.Content>
-            {
-                new Models.Content { ContentId = 1 },
-            };
-            var patch = new JsonPatchDocument<SaveContent>();
-            patch.Remove(x => x.Value);
-            var json = JsonConvert.SerializeObject(patch);
-            using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-
-            var response = await this.client
-                .PatchAsync(new Uri("content/1", UriKind.Relative), strcontent)
-                .ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task PatchContent_ValidContent_Returns200OkAsync()
-        {
-            var filters = new Models.ContentOptionFilter
-            {
-                ContentId = 1,
-            };
-            var patch = new JsonPatchDocument<SaveContent>();
-            patch.Add(x => x.Value, "y");
-            var json = JsonConvert.SerializeObject(patch);
-            using var strcontent = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            var content = new List<Models.Content> { new Models.Content() { ContentId = 1, PageId = 1, BookId = 1, Value = "x" } };
-            this.ContentRepositoryMock.Setup(x => x.GetAsync(It.IsAny<Models.ContentOptionFilter>(), It.IsAny<CancellationToken>())).ReturnsAsync(content);
-            this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
-            this.ContentRepositoryMock.Setup(x => x.UpdateAsync(content.First(), It.IsAny<CancellationToken>())).ReturnsAsync(content.First());
-
-            var response = await this.client
-                .PatchAsync(new Uri("content/1", UriKind.Relative), strcontent)
-                .ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var contentViewModel = await response.Content.ReadAsAsync<Content>(this.formatters).ConfigureAwait(false);
-            Assert.Equal("y", contentViewModel.Value);
         }
 
         private static string AddQueryString(string uriString, Models.ContentOptionFilter filters)
