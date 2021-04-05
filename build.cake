@@ -1,3 +1,5 @@
+#addin nuget:?package=Cake.DotNetCoreEf&version=0.10.0
+
 var target = Argument("Target", "StartAll");
 var configuration =
     HasArgument("Configuration") ? Argument<string>("Configuration") :
@@ -35,7 +37,7 @@ Task("Restore")
     });
 
 Task("Build")
-    .Description("Builds the solution.")
+    .Description("Builds the solutions.")
     .IsDependentOn("Restore")
     .DoesForEach(GetFiles("./src/**/*.sln"), solution =>
     {
@@ -50,7 +52,7 @@ Task("Build")
     });
 
 Task("Test")
-    .Description("Runs unit tests and outputs test results to the artefacts directory.")
+    .Description("Runs tests and outputs test results to the artefacts directory.")
     .DoesForEach(GetFiles("./src/services/**/Test/**/*.sln"), project =>
     {
         DotNetCoreTest(
@@ -72,7 +74,7 @@ Task("Test")
     });
 
 Task("Publish")
-    .Description("Publishes the solution.")
+    .Description("Publishes the solutions.")
     .DoesForEach(GetFiles("./src/services/**/Service/**/*.sln"), project =>
     {
         DotNetCorePublish(
@@ -84,6 +86,14 @@ Task("Publish")
                 NoRestore = true,
                 OutputDirectory = artefactsDirectory + Directory("Publish"),
             });
+    });
+
+Task("Migrate")
+    .Description("Migrates the solutions.")
+    .DoesForEach(GetFiles("./src/services/**/Service/**/*.csproj"), project =>
+    {
+        DotNetCoreEfDatabaseDrop(project.GetDirectory().ToString());
+        DotNetCoreEfDatabaseUpdate(project.GetDirectory().ToString());
     });
 
 Task("Run")
@@ -204,16 +214,19 @@ Task("DockerBuild")
 Task("BuildDocker")
     .Description("Cleans, restores NuGet packages, builds the solution, runs unit tests and then builds a Docker image.")
     .IsDependentOn("Build")
+    .IsDependentOn("Migrate")
     .IsDependentOn("Test")
     .IsDependentOn("DockerBuild");
 Task("PublishArtifacts")
    .Description("Cleans, restores NuGet packages, builds the solution, runs unit tests and then publishe artifacts.")
    .IsDependentOn("Build")
+    .IsDependentOn("Migrate")
    .IsDependentOn("Test")
    .IsDependentOn("Publish");
 Task("StartAll")
     .Description("Cleans, restores NuGet packages, builds the solution, runs unit tests and then run all.")
     .IsDependentOn("Build")
+    .IsDependentOn("Migrate")
     .IsDependentOn("Test")
     .IsDependentOn("Run");
 
