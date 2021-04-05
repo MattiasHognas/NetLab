@@ -95,6 +95,6 @@ namespace Content.Service
                     })
                 .UseSwagger()
                 .UseCustomSwaggerUI()
-                .UseSeedDatabase();
+                .UseSeededDatabase();
     }
 }

@@ -9,6 +9,7 @@ namespace Content.Service
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.ApiExplorer;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Serilog;
     using Serilog.Events;
@@ -19,14 +20,15 @@ namespace Content.Service
     internal static partial class ApplicationBuilderExtensions
     {
         /// <summary>
-        /// Seeds the database.
+        /// Seed and migrates the database.
         /// </summary>
         /// <param name="application">The application builder.</param>
         /// <returns>The application builder middleware.</returns>
-        public static IApplicationBuilder UseSeedDatabase(this IApplicationBuilder application)
+        public static IApplicationBuilder UseSeededDatabase(this IApplicationBuilder application)
         {
             using var scope = application.ApplicationServices.CreateScope();
             var contentContext = scope.ServiceProvider.GetRequiredService<ContentContext>();
+            contentContext.Database.Migrate();
             ContentContextSeed.Seed(contentContext);
             return application;
         }

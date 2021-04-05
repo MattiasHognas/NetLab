@@ -93,7 +93,7 @@ namespace Workspace.Service
                     services => services.AddDbContextFactory<WorkspaceContext>(
                         options =>
                         {
-                            var inMemorySqlite = new SqliteConnection("Data Source=:memory:");
+                            var inMemorySqlite = new SqliteConnection("DataSource=file:workspacedb?mode=memory&cache=shared");
                             inMemorySqlite.Open();
                             options.UseSqlite(inMemorySqlite);
                             options.UseLazyLoadingProxies(true);

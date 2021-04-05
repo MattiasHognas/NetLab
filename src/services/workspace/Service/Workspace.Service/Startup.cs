@@ -95,6 +95,6 @@ namespace Workspace.Service
                     })
                 .UseSwagger()
                 .UseCustomSwaggerUI()
-                .UseSeedDatabase();
+                .UseSeededDatabase();
     }
 }

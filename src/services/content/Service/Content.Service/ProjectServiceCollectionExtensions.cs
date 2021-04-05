@@ -84,7 +84,7 @@ namespace Content.Service
                     services => services.AddDbContextFactory<ContentContext>(
                         options =>
                         {
-                            var inMemorySqlite = new SqliteConnection("Data Source=:memory:");
+                            var inMemorySqlite = new SqliteConnection("DataSource=file:contentdb?mode=memory&cache=shared");
                             inMemorySqlite.Open();
                             options.UseSqlite(inMemorySqlite);
                             options.UseLazyLoadingProxies();
