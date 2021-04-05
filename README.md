@@ -1,7 +1,12 @@
 # What is this?
 
-This is a shared whiteboard app.
-It's built in a strictly separated microservice architecture.
+This is a shared whiteboard app. It's built in a strictly separated microservice architecture.
+
+The goals of the project are:<br/>
+🚀 high speed output.<br/>
+💾 low memory usage.<br/>
+🌈 use only bleeding edge tools and frameworks.<br/>
+🤖 automate development as much as possible.<br/>
 
 ## Tools
 
