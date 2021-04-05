@@ -1,6 +1,7 @@
-# Project
+# What is this?
 
-Shared drawing microservice
+This is a shared whiteboard app.
+It's built in a strictly separated microservice architecture.
 
 ## Tools
 
@@ -10,7 +11,7 @@ Use vscode launch settings or run cake.
 
 #### Build actions
 
-(All following targets also run clean, build, tests and migration)
+(All the following targets also run clean, build, tests and migration)
 
 Start all:
 ```
