@@ -21,11 +21,20 @@ ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 WORKDIR /app
 EXPOSE 80
+# To use the debug build configuration pass --build-arg Configuration=Debug
+ARG Configuration=Release
+
+RUN if [ "${Configuration}" = "Debug" ]; then \
+        apt-get update && \
+        apt-get install -y --no-install-recommends apt-utils && \
+        apt-get install curl unzip procps mongodb -y && \
+        curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /publish/vsdbg; \
+     else \
+        echo "*Whistling*"; \
+    fi
 
 # SDK image used to build and publish the application
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS sdk
-# To use the debug build configuration pass --build-arg Configuration=Debug
-ARG Configuration=Release
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=true \
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 WORKDIR /src
