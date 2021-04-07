@@ -28,7 +28,15 @@ namespace Content.Service
         {
             using var scope = application.ApplicationServices.CreateScope();
             var contentContext = scope.ServiceProvider.GetRequiredService<ContentContext>();
-            contentContext.Database.Migrate();
+            try
+            {
+                contentContext.Database.Migrate();
+            }
+            catch (Exception exception)
+            {
+                Log.Information(exception, "Migration failed");
+            }
+
             ContentContextSeed.Seed(contentContext);
             return application;
         }

@@ -85,7 +85,7 @@ namespace Workspace.Service
         /// http://docs.asp.net/en/latest/fundamentals/configuration.html.</param>
         /// <param name="webHostEnvironment">The environment the application is running under. This can be Development,
         /// Staging or Production by default. See http://docs.asp.net/en/latest/fundamentals/environments.html.</param>
-        /// <returns>The services with contexts added.</returns>
+        /// <returns>The services with database contexts added.</returns>
         public static IServiceCollection AddProjectContexts(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment) =>
             services
                 .AddIfElse(

@@ -34,50 +34,6 @@ namespace Content.Service.IntegrationTest.Controllers
         }
 
         [Fact]
-        public async Task Options_Filter_Returns200OkAsync()
-        {
-            var filters = new Models.ContentOptionFilter
-            {
-                ContentId = 1,
-            };
-            var uriString = AddQueryString("content", filters);
-            using var request = new HttpRequestMessage(HttpMethod.Options, uriString);
-
-            var response = await this.client.SendAsync(request).ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(
-                new string[]
-                {
-                    HttpMethods.Get,
-                    HttpMethods.Post,
-                    HttpMethods.Head,
-                    HttpMethods.Options,
-                },
-                response.Content.Headers.Allow);
-        }
-
-        [Fact]
-        public async Task Options_ContentId_Returns200OkAsync()
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Options, "content/1");
-
-            var response = await this.client.SendAsync(request).ConfigureAwait(false);
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(
-                new string[]
-                {
-                    HttpMethods.Delete,
-                    HttpMethods.Head,
-                    HttpMethods.Options,
-                    HttpMethods.Patch,
-                    HttpMethods.Put,
-                },
-                response.Content.Headers.Allow);
-        }
-
-        [Fact]
         public async Task Delete_ContentFound_Returns204NoContentAsync()
         {
             var filters = new Models.ContentOptionFilter

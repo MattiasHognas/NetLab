@@ -81,7 +81,7 @@ namespace Content.Service.Data
 
             modelBuilder.Entity<Content>().HasKey(b => b.ContentId);
 
-            if (Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+            if (this.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
             {
                 // SQLite does not have proper support for DateTimeOffset via Entity Framework Core, see the limitations
                 // here: https://docs.microsoft.com/en-us/ef/core/providers/sqlite/limitations#query-limitations

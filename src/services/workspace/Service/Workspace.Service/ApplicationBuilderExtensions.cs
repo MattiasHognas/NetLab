@@ -28,7 +28,15 @@ namespace Workspace.Service
         {
             using var scope = application.ApplicationServices.CreateScope();
             var workspaceContext = scope.ServiceProvider.GetRequiredService<WorkspaceContext>();
-            workspaceContext.Database.Migrate();
+            try
+            {
+                workspaceContext.Database.Migrate();
+            }
+            catch (Exception exception)
+            {
+                Log.Information(exception, "Migration failed");
+            }
+
             WorkspaceContextSeed.Seed(workspaceContext);
             return application;
         }
