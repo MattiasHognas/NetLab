@@ -1,6 +1,5 @@
 namespace Workspace.Service.IntegrationTest
 {
-    using System;
     using System.Net.Http;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Testing;
@@ -37,7 +36,7 @@ namespace Workspace.Service.IntegrationTest
 
         public Mock<IPrincipalService> PrincipalServiceMock { get; } = new Mock<IPrincipalService>(MockBehavior.Strict);
 
-        public void VerifyAllMocks() => Mock.VerifyAll(this.BookRepositoryMock, this.PageRepositoryMock, this.ClockServiceMock, this.PrincipalServiceMock);
+        public void VerifyAllMocks() => Mock.VerifyAll(this.BookRepositoryMock, this.PageRepositoryMock);
 
         protected override void ConfigureClient(HttpClient client)
         {
@@ -55,16 +54,12 @@ namespace Workspace.Service.IntegrationTest
                 .UseEnvironment("Test")
                 .ConfigureServices(this.ConfigureServices);
 
-        protected virtual void ConfigureServices(IServiceCollection services)
-        {
-            this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
-            this.PrincipalServiceMock.SetupGet(x => x.NameIdentifier).Returns("1");
+        protected virtual void ConfigureServices(IServiceCollection services) =>
             services
                 .AddSingleton(this.BookRepositoryMock.Object)
                 .AddSingleton(this.PageRepositoryMock.Object)
                 .AddSingleton(this.ClockServiceMock.Object)
                 .AddSingleton(this.PrincipalServiceMock.Object);
-        }
 
         protected override void Dispose(bool disposing)
         {

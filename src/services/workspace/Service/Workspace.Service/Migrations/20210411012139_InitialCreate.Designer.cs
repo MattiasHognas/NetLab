@@ -4,45 +4,49 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Workspace.Service.Data;
 
 namespace Workspace.Service.Migrations
 {
     [DbContext(typeof(WorkspaceContext))]
-    [Migration("20210404232457_InitialCreate")]
+    [Migration("20210411012139_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.4");
+                .HasAnnotation("Relational:MaxIdentifierLength", 63)
+                .HasAnnotation("ProductVersion", "5.0.5")
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("Workspace.Service.Models.Book", b =>
                 {
-                    b.Property<ulong>("BookId")
+                    b.Property<long>("BookId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<ulong>("CreatedBy")
-                        .HasColumnType("INTEGER");
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
-                    b.Property<ulong>("ModifiedBy")
-                        .HasColumnType("INTEGER");
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset>("ModifiedDate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("BookId");
 
@@ -51,32 +55,33 @@ namespace Workspace.Service.Migrations
 
             modelBuilder.Entity("Workspace.Service.Models.Page", b =>
                 {
-                    b.Property<ulong>("PageId")
+                    b.Property<long>("PageId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<ulong>("BookId")
-                        .HasColumnType("INTEGER");
+                    b.Property<long>("BookId")
+                        .HasColumnType("bigint");
 
-                    b.Property<ulong>("CreatedBy")
-                        .HasColumnType("INTEGER");
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
-                    b.Property<ulong>("ModifiedBy")
-                        .HasColumnType("INTEGER");
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset>("ModifiedDate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("PageId");
 

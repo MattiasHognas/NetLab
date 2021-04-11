@@ -15,7 +15,7 @@ namespace Content.Service.Models
         /// <summary>
         /// Gets or sets the created by user id.
         /// </summary>
-        public ulong CreatedBy { get; set; }
+        public long CreatedBy { get; set; }
 
         /// <summary>
         /// Gets or sets the modified date.
@@ -25,6 +25,6 @@ namespace Content.Service.Models
         /// <summary>
         /// Gets or sets the modified by user id.
         /// </summary>
-        public ulong ModifiedBy { get; set; }
+        public long ModifiedBy { get; set; }
     }
 }

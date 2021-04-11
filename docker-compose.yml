@@ -1,0 +1,95 @@
+version: '3.8'
+services:
+  content:
+    container_name: content
+    build:
+      context: src/services/content/
+      dockerfile: Dockerfile
+    ports:
+      - 5200:80
+    hostname: content
+    environment:
+      ASPNETCORE_ENVIRONMENT: 'Production'
+    depends_on:
+      - contentdb
+    networks:
+      - backend
+  workspace:
+    container_name: workspace
+    build:
+      context: src/services/workspace/
+      dockerfile: Dockerfile
+    ports:
+      - 5100:80
+    hostname: workspace
+    environment:
+      ASPNETCORE_ENVIRONMENT: 'Production'
+    depends_on:
+      - workspacedb
+    networks:
+      - backend
+  dbadmin:
+    container_name: dbadmin
+    image: taivokasper/omnidb:latest
+    ports:
+      - 25482:25482
+      - 8080:8080
+    hostname: dbadmin
+    volumes:
+      - config-omnidb:/etc/omnidb
+    restart: unless-stopped
+    depends_on:
+      - contentdb
+      - workspacedb
+    networks:
+      - backend
+  workspacedb:
+    container_name: workspacedb
+    image: postgres:13.2-alpine
+    ports:
+      - 5102:5432
+    hostname: workspacedb
+    volumes:
+      - pgdata:/var/lib/postgresql/data/workspace
+      - pgconf:/etc/postgresql
+      - pglog:/var/log/postgresql
+    environment:
+      POSTGRES_DB: dev
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      PGDATA: /var/lib/postgresql/data
+    networks:
+      - backend
+  contentdb:
+    container_name: contentdb
+    image: postgres:13.2-alpine
+    ports:
+      - 5202:5432
+    hostname: contentdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data/content
+      - pgconf:/etc/postgresql
+      - pglog:/var/log/postgresql
+    environment:
+      POSTGRES_DB: dev
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      PGDATA: /var/lib/postgresql/data
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge
+    name: backend
+  frontend:
+    driver: bridge
+    name: frontend
+volumes:
+    config-omnidb:
+        driver: local
+    pgdata:
+        driver: local
+    pgconf:
+        driver: local
+    pglog:
+        driver: local

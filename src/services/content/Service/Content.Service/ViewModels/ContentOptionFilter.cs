@@ -8,16 +8,16 @@ namespace Content.Service.ViewModels
         /// <summary>
         /// Gets or sets the content id which is filtered.
         /// </summary>
-        public ulong? ContentId { get; set; }
+        public long? ContentId { get; set; }
 
         /// <summary>
         /// Gets or sets the scene id which is filtered.
         /// </summary>
-        public ulong? PageId { get; set; }
+        public long? PageId { get; set; }
 
         /// <summary>
         /// Gets or sets the book id which is filtered.
         /// </summary>
-        public ulong? BookId { get; set; }
+        public long? BookId { get; set; }
     }
 }

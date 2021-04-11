@@ -40,7 +40,7 @@ namespace Workspace.Service.Commands
         /// <param name="savePage">The save page.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A action result.</returns>
-        public async Task<IActionResult> ExecuteAsync(ulong pageId, SavePage savePage, CancellationToken cancellationToken)
+        public async Task<IActionResult> ExecuteAsync(long pageId, SavePage savePage, CancellationToken cancellationToken)
         {
             var filters = new Models.PageOptionFilter { PageId = pageId };
             var page = await this.pageRepository.GetAsync(filters, cancellationToken).ConfigureAwait(false);

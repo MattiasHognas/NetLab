@@ -21,9 +21,11 @@ ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 WORKDIR /app
 EXPOSE 80
+
+# SDK image used to build and publish the application
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS sdk
 # To use the debug build configuration pass --build-arg Configuration=Debug
 ARG Configuration=Release
-
 RUN if [ "${Configuration}" = "Debug" ]; then \
         apt-get update && \
         apt-get install -y --no-install-recommends apt-utils && \
@@ -32,9 +34,6 @@ RUN if [ "${Configuration}" = "Debug" ]; then \
      else \
         echo "*Whistling*"; \
     fi
-
-# SDK image used to build and publish the application
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS sdk
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=true \
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 WORKDIR /src

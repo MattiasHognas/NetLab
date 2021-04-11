@@ -10,7 +10,7 @@ namespace Workspace.Service.ViewModels
         /// <summary>
         /// Gets or sets the book id.
         /// </summary>
-        public ulong BookId { get; set; } = default!;
+        public long BookId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the name.

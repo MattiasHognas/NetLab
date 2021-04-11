@@ -10,17 +10,17 @@ namespace Content.Service.ViewModels
         /// <summary>
         /// Gets or sets the content id.
         /// </summary>
-        public ulong ContentId { get; set; }
+        public long ContentId { get; set; }
 
         /// <summary>
         /// Gets or sets the page id.
         /// </summary>
-        public ulong PageId { get; set; } = default!;
+        public long PageId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the book id.
         /// </summary>
-        public ulong BookId { get; set; } = default!;
+        public long BookId { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the value.

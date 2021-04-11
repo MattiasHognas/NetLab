@@ -6,6 +6,7 @@ namespace Workspace.Service.Data
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.InMemory.ValueGeneration.Internal;
     using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
     using Workspace.Service.Models;
     using Workspace.Service.Services;
@@ -99,7 +100,7 @@ namespace Workspace.Service.Data
                 .HasOne(p => p.Book)
                 .WithMany(b => b.Pages);
 
-            if (Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+            if (this.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
             {
                 // SQLite does not have proper support for DateTimeOffset via Entity Framework Core, see the limitations
                 // here: https://docs.microsoft.com/en-us/ef/core/providers/sqlite/limitations#query-limitations
@@ -128,7 +129,7 @@ namespace Workspace.Service.Data
             var currentDate = this.clockService.UtcNow;
             var nameIdentifier = this.principalService.NameIdentifier;
             var currentUserId = !string.IsNullOrEmpty(nameIdentifier)
-                ? Convert.ToUInt64(nameIdentifier, CultureInfo.InvariantCulture)
+                ? Convert.ToInt64(nameIdentifier, CultureInfo.InvariantCulture)
                 : 0;
 
             foreach (var entity in entities)

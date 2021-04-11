@@ -34,7 +34,7 @@ namespace Workspace.Service.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "A page with the specified id was not found.", typeof(ProblemDetails))]
         public Task<IActionResult> DeleteAsync(
             [FromServices] DeletePageCommand command,
-            ulong pageId,
+            long pageId,
             CancellationToken cancellationToken) => command.ExecuteAsync(pageId, cancellationToken);
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Workspace.Service.Controllers
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public Task<IActionResult> PutAsync(
             [FromServices] PutPageCommand command,
-            ulong pageId,
+            long pageId,
             [FromBody] SavePage page,
             CancellationToken cancellationToken) => command.ExecuteAsync(pageId, page, cancellationToken);
     }

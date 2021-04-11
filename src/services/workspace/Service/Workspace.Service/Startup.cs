@@ -60,7 +60,7 @@ namespace Workspace.Service
                 .AddProjectMappers()
                 .AddProjectRepositories()
                 .AddProjectServices()
-                .AddProjectContexts(this.configuration, this.webHostEnvironment);
+                .AddIf(this.webHostEnvironment.IsProduction() || this.webHostEnvironment.IsDevelopment(), x => x.AddProjectContexts(this.configuration));
 
         /// <summary>
         /// Configures the application and HTTP request pipeline. Configure is called after ConfigureServices is
@@ -95,6 +95,8 @@ namespace Workspace.Service
                     })
                 .UseSwagger()
                 .UseCustomSwaggerUI()
-                .UseSeededDatabase();
+                .UseIf(
+                    this.webHostEnvironment.IsProduction(),
+                    x => x.UseSeededDatabase());
     }
 }

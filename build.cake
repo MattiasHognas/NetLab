@@ -6,17 +6,21 @@ var configuration =
     EnvironmentVariable("Configuration") is not null ? EnvironmentVariable("Configuration") :
     "Release";
 var artefactsDirectory = Directory("./Artefacts");
-var tag =
-    HasArgument("Tag") ? Argument<string>("Tag") :
-    EnvironmentVariable("Tag") is not null ? EnvironmentVariable("Tag") :
-    null;
 var platform =
     HasArgument("Platform") ? Argument<string>("Platform") :
     EnvironmentVariable("Platform") is not null ? EnvironmentVariable("Platform") :
     "linux/amd64,linux/arm64";
-var push =
-    HasArgument("Push") ? Argument<bool>("Push") :
-    EnvironmentVariable("Push") is not null ? bool.Parse(EnvironmentVariable("Push")) :
+var dockerTag =
+    HasArgument("DockerTag") ? Argument<string>("DockerTag") :
+    EnvironmentVariable("DockerTag") is not null ? EnvironmentVariable("DockerTag") :
+    null;
+var dockerPush =
+    HasArgument("DockerPush") ? Argument<bool>("DockerPush") :
+    EnvironmentVariable("DockerPush") is not null ? bool.Parse(EnvironmentVariable("DockerPush")) :
+    false;
+var dockerRun =
+    HasArgument("DockerRun") ? Argument<bool>("DockerRun") :
+    EnvironmentVariable("DockerRun") is not null ? bool.Parse(EnvironmentVariable("DockerRun")) :
     false;
 
 Task("Clean")
@@ -100,7 +104,7 @@ Task("Run")
     .Description("Runs all apps and services.")
     .Does(() =>
     {
-        DotNetCoreRunInParallel(GetFiles("./src/services/**/Service/**/*.csproj"), "Release");
+        DotNetCoreRunInParallel(GetFiles("./src/services/**/Service/**/*.csproj"), configuration);
     });
 
 public void DotNetCoreRunInParallel(
@@ -133,7 +137,7 @@ Task("DockerBuild")
     .Description("Builds a Docker image.")
     .DoesForEach(GetFiles("./src/services/**/Dockerfile"), dockerfile =>
     {
-        tag = tag ?? dockerfile.GetDirectory().GetDirectoryName().ToLower();
+        tag = dockerTag ?? dockerfile.GetDirectory().GetDirectoryName().ToLower();
         var version = GetVersion();
         var gitCommitSha = GetGitCommitSha();
 
@@ -173,12 +177,23 @@ Task("DockerBuild")
                 .AppendSwitchQuoted("--file", dockerfile.ToString())
                 .Append(dockerfile.GetDirectory().ToString())
                 .RenderSafe());
-        if (push)
+        if (dockerPush)
         {
             StartProcess(
                 "docker",
                 new ProcessArgumentBuilder()
                     .AppendSwitchQuoted("push", $"{tag}:{version}")
+                    .RenderSafe());
+        }
+        if (dockerRun)
+        {
+            StartProcess(
+                "docker",
+                new ProcessArgumentBuilder()
+                    .Append("run")
+                    .Append("-d")
+                    .AppendSwitchQuoted("--name", $"{tag}")
+                    .Append($"{tag}:{version}")
                     .RenderSafe());
         }
 

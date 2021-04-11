@@ -8,6 +8,7 @@ namespace Workspace.Service
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Serilog;
     using Workspace.Service.Commands;
     using Workspace.Service.Data;
     using Workspace.Service.Mappers;
@@ -61,7 +62,7 @@ namespace Workspace.Service
         /// Adds repository middlewares to the service collection.
         /// </summary>
         /// <param name="services">The services.</param>
-        /// <returns>The services with repository services added.</returns>
+        /// <returns>The services with repositories added.</returns>
         public static IServiceCollection AddProjectRepositories(this IServiceCollection services) =>
             services
                 .AddSingleton<IBookRepository, BookRepository>()
@@ -71,7 +72,7 @@ namespace Workspace.Service
         /// Adds service middlewares to the service collection.
         /// </summary>
         /// <param name="services">The services.</param>
-        /// <returns>The services with service services added.</returns>
+        /// <returns>The services with services added.</returns>
         public static IServiceCollection AddProjectServices(this IServiceCollection services) =>
             services
                 .AddSingleton<IClockService, ClockService>()
@@ -83,29 +84,18 @@ namespace Workspace.Service
         /// <param name="services">The services.</param>
         /// <param name="configuration">The application configuration, where key value pair settings are stored. See
         /// http://docs.asp.net/en/latest/fundamentals/configuration.html.</param>
-        /// <param name="webHostEnvironment">The environment the application is running under. This can be Development,
-        /// Staging or Production by default. See http://docs.asp.net/en/latest/fundamentals/environments.html.</param>
-        /// <returns>The services with database contexts added.</returns>
-        public static IServiceCollection AddProjectContexts(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment webHostEnvironment) =>
+        /// <returns>The services with context added.</returns>
+        public static IServiceCollection AddProjectContexts(this IServiceCollection services, IConfiguration configuration) =>
             services
-                .AddIfElse(
-                    webHostEnvironment.IsDevelopment() || webHostEnvironment.IsEnvironment("Test"),
-                    services => services.AddDbContextFactory<WorkspaceContext>(
-                        options =>
-                        {
-                            var inMemorySqlite = new SqliteConnection("DataSource=file:workspacedb?mode=memory&cache=shared");
-                            inMemorySqlite.Open();
-                            options.UseSqlite(inMemorySqlite);
-                            options.UseLazyLoadingProxies(true);
-                        },
-                        ServiceLifetime.Singleton),
-                    services => services.AddDbContextFactory<WorkspaceContext>(
-                        options =>
-                        {
-                            options.UseSqlServer(configuration.GetConnectionString("ServiceConnection"));
-                            options.UseLazyLoadingProxies(true);
-                        },
-                        ServiceLifetime.Singleton))
+                .AddDbContextFactory<WorkspaceContext>(
+                    options =>
+                    {
+                        var serviceConnection = configuration.GetConnectionString("ServiceConnection");
+                        Log.Information("Connectionstring: " + serviceConnection);
+                        options.UseNpgsql(serviceConnection);
+                        options.UseLazyLoadingProxies(true);
+                    },
+                    ServiceLifetime.Singleton)
                 .AddTransient(serviceProvider => serviceProvider.GetRequiredService<IDbContextFactory<WorkspaceContext>>().CreateDbContext());
     }
 }

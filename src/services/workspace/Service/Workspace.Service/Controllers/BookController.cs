@@ -34,7 +34,7 @@ namespace Workspace.Service.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "A book with the specified id was not found.", typeof(ProblemDetails))]
         public Task<IActionResult> DeleteAsync(
             [FromServices] DeleteBookCommand command,
-            ulong bookId,
+            long bookId,
             CancellationToken cancellationToken) => command.ExecuteAsync(bookId, cancellationToken);
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Workspace.Service.Controllers
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public Task<IActionResult> PutAsync(
             [FromServices] PutBookCommand command,
-            ulong bookId,
+            long bookId,
             [FromBody] SaveBook book,
             CancellationToken cancellationToken) => command.ExecuteAsync(bookId, book, cancellationToken);
     }

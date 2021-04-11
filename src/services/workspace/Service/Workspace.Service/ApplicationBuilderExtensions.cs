@@ -38,6 +38,7 @@ namespace Workspace.Service
             }
 
             WorkspaceContextSeed.Seed(workspaceContext);
+
             return application;
         }
 

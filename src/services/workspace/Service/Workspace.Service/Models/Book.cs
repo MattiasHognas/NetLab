@@ -10,7 +10,7 @@
         /// <summary>
         /// Gets or sets the book id.
         /// </summary>
-        public ulong BookId { get; set; }
+        public long BookId { get; set; }
 
         /// <summary>
         /// Gets or sets the name.

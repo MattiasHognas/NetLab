@@ -79,7 +79,7 @@ namespace Content.Service.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Content>().HasKey(b => b.ContentId);
+            modelBuilder.Entity<Content>().HasKey(c => c.ContentId);
 
             if (this.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
             {
@@ -110,7 +110,7 @@ namespace Content.Service.Data
             var currentDate = this.clockService.UtcNow;
             var nameIdentifier = this.principalService.NameIdentifier;
             var currentUserId = !string.IsNullOrEmpty(nameIdentifier)
-                ? Convert.ToUInt64(nameIdentifier, CultureInfo.InvariantCulture)
+                ? Convert.ToInt64(nameIdentifier, CultureInfo.InvariantCulture)
                 : 0;
 
             foreach (var entity in entities)

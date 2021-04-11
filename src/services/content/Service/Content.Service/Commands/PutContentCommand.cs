@@ -40,7 +40,7 @@ namespace Content.Service.Commands
         /// <param name="saveContent">The save content.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A action result.</returns>
-        public async Task<IActionResult> ExecuteAsync(ulong contentId, SaveContent saveContent, CancellationToken cancellationToken)
+        public async Task<IActionResult> ExecuteAsync(long contentId, SaveContent saveContent, CancellationToken cancellationToken)
         {
             var filters = new Models.ContentOptionFilter { ContentId = contentId };
             var content = await this.contentRepository.GetAsync(filters, cancellationToken).ConfigureAwait(false);

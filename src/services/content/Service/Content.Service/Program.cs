@@ -11,6 +11,8 @@ namespace Content.Service
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Serilog;
+    using Serilog.Enrichers;
+    using Serilog.Events;
     using Serilog.Extensions.Hosting;
 
     /// <summary>
@@ -148,8 +150,10 @@ namespace Content.Service
         /// <returns>A logger that can load a new configuration.</returns>
         private static ReloadableLogger CreateBootstrapLogger() =>
             new LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.Debug()
+                .MinimumLevel.Debug()
+                .Enrich.With(new ThreadIdEnricher())
+                .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Debug)
+                .Enrich.With(new ThreadIdEnricher())
                 .CreateBootstrapLogger();
 
         /// <summary>
@@ -165,8 +169,10 @@ namespace Content.Service
                 .ReadFrom.Services(services)
                 .Enrich.WithProperty("Application", context.HostingEnvironment.ApplicationName)
                 .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
-                .WriteTo.Conditional(
-                    x => context.HostingEnvironment.IsDevelopment(),
-                    x => x.Console().WriteTo.Debug());
+                .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Debug)
+                .WriteTo.Debug();
+                // .WriteTo.Conditional(
+                //     x => context.HostingEnvironment.IsDevelopment(),
+                //     x => x.Console().WriteTo.Debug());
     }
 }
