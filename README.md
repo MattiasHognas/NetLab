@@ -12,7 +12,7 @@ The goals of the project are:<br/>
 
 ### Build tools
 
-Use vscode launch settings or run cake.
+Run docker-compose (or vscode launch settings).
 
 #### Build actions
 
