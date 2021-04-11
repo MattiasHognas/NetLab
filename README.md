@@ -16,21 +16,14 @@ Use vscode launch settings or run cake.
 
 #### Build actions
 
-(All the following targets also run clean, build, tests and migration)
-
-Start all:
-```
-dotnet cake --Target=StartAll
-```
-
 Build containers:
 ```
-dotnet cake --Target=BuildDocker
+dotnet-compose build
 ```
 
-Build artifacts:
+Start containers:
 ```
-dotnet cake --Target=PublishArtifacts
+dotnet-compose up
 ```
 
 ## Features
@@ -48,7 +41,8 @@ dotnet cake --Target=PublishArtifacts
 ✔️ Add database to content service<br/>
 ✔️ Add content dockefile<br/>
 ✔️ Add build scripts<br/>
-✔️ Add database to content service
+✔️ Add database to content service<br/>
+✔️ Add migrations
 
 ### Features to implement
  
