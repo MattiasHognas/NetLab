@@ -1,17 +1,17 @@
 version: '3.8'
 services:
-  content:
-    container_name: content
+  identity:
+    container_name: identity
     build:
-      context: src/services/content/
+      context: src/services/identity/
       dockerfile: Dockerfile
     ports:
-      - 5200:80
-    hostname: content
+      - 5100:80
+    hostname: identity
     environment:
       ASPNETCORE_ENVIRONMENT: 'Production'
     depends_on:
-      - contentdb
+      - identitydb
     networks:
       - backend
   workspace:
@@ -20,12 +20,26 @@ services:
       context: src/services/workspace/
       dockerfile: Dockerfile
     ports:
-      - 5100:80
+      - 5200:80
     hostname: workspace
     environment:
       ASPNETCORE_ENVIRONMENT: 'Production'
     depends_on:
       - workspacedb
+    networks:
+      - backend
+  content:
+    container_name: content
+    build:
+      context: src/services/content/
+      dockerfile: Dockerfile
+    ports:
+      - 5300:80
+    hostname: content
+    environment:
+      ASPNETCORE_ENVIRONMENT: 'Production'
+    depends_on:
+      - contentdb
     networks:
       - backend
   dbadmin:
@@ -39,15 +53,33 @@ services:
       - config-omnidb:/etc/omnidb
     restart: unless-stopped
     depends_on:
-      - contentdb
+      - identitydb
       - workspacedb
+      - contentdb
+    networks:
+      - backend
+  identitydb:
+    container_name: identitydb
+    image: postgres:13.2-alpine
+    ports:
+      - 5102:5432
+    hostname: identitydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data/identity
+      - pgconf:/etc/postgresql
+      - pglog:/var/log/postgresql
+    environment:
+      POSTGRES_DB: dev
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      PGDATA: /var/lib/postgresql/data/identity
     networks:
       - backend
   workspacedb:
     container_name: workspacedb
     image: postgres:13.2-alpine
     ports:
-      - 5102:5432
+      - 5202:5432
     hostname: workspacedb
     volumes:
       - pgdata:/var/lib/postgresql/data/workspace
@@ -57,14 +89,14 @@ services:
       POSTGRES_DB: dev
       POSTGRES_USER: dev
       POSTGRES_PASSWORD: dev
-      PGDATA: /var/lib/postgresql/data
+      PGDATA: /var/lib/postgresql/data/workspace
     networks:
       - backend
   contentdb:
     container_name: contentdb
     image: postgres:13.2-alpine
     ports:
-      - 5202:5432
+      - 5302:5432
     hostname: contentdb
     volumes:
       - pgdata:/var/lib/postgresql/data/content
@@ -74,7 +106,7 @@ services:
       POSTGRES_DB: dev
       POSTGRES_USER: dev
       POSTGRES_PASSWORD: dev
-      PGDATA: /var/lib/postgresql/data
+      PGDATA: /var/lib/postgresql/data/content
     networks:
       - backend
 networks:

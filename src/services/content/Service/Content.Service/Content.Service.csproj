@@ -7,7 +7,7 @@
     <!-- Used to store connection strings and other sensitive settings, so you don't have to check them into your source
          control provider. Only use this in Development, it is not intended for Production use.
          See http://docs.asp.net/en/latest/security/app-secrets.html -->
-    <UserSecretsId>content-33374BEE-806C-486A-9759-0B5B477F77C9</UserSecretsId>
+    <UserSecretsId>content-F6DDD646-B771-40DB-A53C-E968D2315DBF</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Label="Docker">
@@ -38,7 +38,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="5.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
