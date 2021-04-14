@@ -1,13 +1,9 @@
 namespace Workspace.Service
 {
-    using Boxed.AspNetCore;
     using Boxed.Mapping;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Data.Sqlite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Hosting;
     using Serilog;
     using Workspace.Service.Commands;
     using Workspace.Service.Data;

@@ -6,7 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Content.Service", "Service\Content.Service", "{57BAE1BC-D418-4A95-B292-C0E9324B0A54}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Content.Service.IntegrationTest", "Test\Content.Service.IntegrationTest", "{D57B72FA-A893-400C-AB2E-6919219A38D2}"
-EndProjectSection
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Content.Service", "Service\Content.Service\Content.Service.csproj", "{37F1F839-E685-4E26-B50E-40E3C4896737}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Content.Service.IntegrationTest", "Test\Content.Service.IntegrationTest\Content.Service.IntegrationTest.csproj", "{57839160-3C89-4A5A-BC23-A78F39551C1E}"
