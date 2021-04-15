@@ -75,42 +75,7 @@
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders()
                 .Services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddJwtBearer(options =>
-                {
-                    var issuer = this.configuration["JWT:ValidIssuer"];
-                    var audiences = this.configuration.GetSection("JWT:ValidAudiences").Get<string[]>();
-                    var issuerKey = this.configuration["JWT:Secret"];
-                    options.SaveToken = true;
-                    options.RequireHttpsMetadata = false;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidAudiences = audiences,
-                        ValidIssuer = issuer,
-                        RequireExpirationTime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(issuerKey)),
-                        ValidateIssuerSigningKey = true,
-                    };
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnAuthenticationFailed = context =>
-                        {
-                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
-                            {
-                                context.Response.Headers.Add("Token-Expired", "true");
-                            }
-
-                            return Task.CompletedTask;
-                        },
-                    };
-                })
-                .Services
+                .AddCustomAuthentication(this.configuration)
                 .AddIf(this.webHostEnvironment.IsProduction() || this.webHostEnvironment.IsDevelopment(), x => x.AddProjectContexts(this.configuration));
 
         /// <summary>

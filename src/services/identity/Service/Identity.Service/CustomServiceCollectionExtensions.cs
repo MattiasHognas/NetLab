@@ -3,6 +3,7 @@ namespace Identity.Service
     using System.IO.Compression;
     using System.Linq;
     using System.Text;
+    using System.Threading.Tasks;
     using Boxed.AspNetCore;
     using Identity.Service.Constants;
     using Identity.Service.Options;
@@ -162,24 +163,39 @@ namespace Identity.Service
         /// <returns>The services with context added.</returns>
         public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration) =>
             services
-                .AddAuthentication(auth =>
+                .AddAuthentication(options =>
                 {
-                    auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddJwtBearer(opt =>
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(options =>
                 {
-                    var validAudiences = configuration.GetSection("JWT:ValidAudiences").Get<string[]>();
-                    var validIssuer = configuration["JWT:ValidIssuer"];
-                    var issuerSigningKeySecret = configuration["JWT:IssuerSigningKeySecret"];
-                    opt.TokenValidationParameters = new TokenValidationParameters
+                    var audiences = configuration.GetSection("JWT:ValidAudiences").Get<string[]>();
+                    var issuer = configuration["JWT:ValidIssuer"];
+                    var issuerKey = configuration["JWT:Secret"];
+                    options.SaveToken = true;
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
-                        ValidAudiences = validAudiences,
-                        ValidIssuer = validIssuer,
+                        ValidAudiences = audiences,
+                        ValidIssuer = issuer,
                         RequireExpirationTime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(issuerSigningKeySecret)),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(issuerKey)),
                         ValidateIssuerSigningKey = true,
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                            {
+                                context.Response.Headers.Add("Token-Expired", "true");
+                            }
+
+                            return Task.CompletedTask;
+                        },
                     };
                 })
                 .Services;
