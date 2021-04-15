@@ -1,11 +1,8 @@
 ﻿namespace Identity.Service
 {
-    using System.Text;
-    using System.Threading.Tasks;
     using Boxed.AspNetCore;
     using Identity.Service.Constants;
     using Identity.Service.Data;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
@@ -14,7 +11,6 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.IdentityModel.Tokens;
 
     /// <summary>
     /// The main start-up class for the application.
