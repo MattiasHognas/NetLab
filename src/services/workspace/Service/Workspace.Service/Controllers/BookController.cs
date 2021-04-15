@@ -96,6 +96,6 @@ namespace Workspace.Service.Controllers
             [FromBody] SaveBook book,
             CancellationToken cancellationToken) => command.ExecuteAsync(bookId, book, cancellationToken);
     }
-}
 #pragma warning restore CA1062 // Validate arguments of public methods
 #pragma warning restore CA1822 // Mark members as static
+}

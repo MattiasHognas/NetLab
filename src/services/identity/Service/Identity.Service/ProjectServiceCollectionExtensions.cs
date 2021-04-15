@@ -71,7 +71,7 @@ namespace Identity.Service
                         var serviceConnection = configuration.GetConnectionString("ServiceConnection");
                         Log.Information("Connectionstring: " + serviceConnection);
                         options.UseNpgsql(serviceConnection);
-                        options.UseLazyLoadingProxies(true);
+                        options.UseLazyLoadingProxies();
                     },
                     ServiceLifetime.Singleton)
                 .AddTransient(serviceProvider => serviceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext());

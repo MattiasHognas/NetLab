@@ -1,6 +1,7 @@
 ﻿namespace Identity.Service
 {
     using System.Text;
+    using System.Threading.Tasks;
     using Boxed.AspNetCore;
     using Identity.Service.Constants;
     using Identity.Service.Data;
@@ -74,21 +75,39 @@
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders()
                 .Services
-                .AddAuthentication(auth =>
+                .AddAuthentication(options =>
                 {
-                    auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddJwtBearer(opt =>
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(options =>
                 {
-                    opt.TokenValidationParameters = new TokenValidationParameters
+                    var issuer = this.configuration["JWT:ValidIssuer"];
+                    var audiences = this.configuration.GetSection("JWT:ValidAudiences").Get<string[]>();
+                    var issuerKey = this.configuration["JWT:Secret"];
+                    options.SaveToken = true;
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
-                        ValidAudience = "http://sudidav.io",
-                        ValidIssuer = "http://sudidav.io",
+                        ValidAudiences = audiences,
+                        ValidIssuer = issuer,
                         RequireExpirationTime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("This is my key for the Encryption")),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(issuerKey)),
                         ValidateIssuerSigningKey = true,
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                            {
+                                context.Response.Headers.Add("Token-Expired", "true");
+                            }
+
+                            return Task.CompletedTask;
+                        },
                     };
                 })
                 .Services
@@ -111,6 +130,7 @@
                     this.webHostEnvironment.IsDevelopment(),
                     x => x.UseDeveloperExceptionPage())
                 .UseRouting()
+                .UseAuthentication()
                 .UseAuthorization()
                 .UseCors(CorsPolicyName.AllowAny)
                 .UseStaticFilesWithCacheControl()

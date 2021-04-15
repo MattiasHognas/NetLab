@@ -96,6 +96,6 @@ namespace Content.Service.Controllers
             [FromBody] SaveContent content,
             CancellationToken cancellationToken) => command.ExecuteAsync(contentId, content, cancellationToken);
     }
-}
 #pragma warning restore CA1062 // Validate arguments of public methods
 #pragma warning restore CA1822 // Mark members as static
+}

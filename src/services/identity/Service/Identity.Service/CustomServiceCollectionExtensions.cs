@@ -2,9 +2,11 @@ namespace Identity.Service
 {
     using System.IO.Compression;
     using System.Linq;
+    using System.Text;
     using Boxed.AspNetCore;
     using Identity.Service.Constants;
     using Identity.Service.Options;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -13,6 +15,7 @@ namespace Identity.Service
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
+    using Microsoft.IdentityModel.Tokens;
     using Swashbuckle.AspNetCore.SwaggerGen;
 
     /// <summary>
@@ -149,5 +152,36 @@ namespace Identity.Service
             services
                 .AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>()
                 .AddSwaggerGen();
+
+        /// <summary>
+        /// Adds authentication services and configures the authentication services.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        /// <param name="configuration">The application configuration, where key value pair settings are stored. See
+        /// http://docs.asp.net/en/latest/fundamentals/configuration.html.</param>
+        /// <returns>The services with context added.</returns>
+        public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration) =>
+            services
+                .AddAuthentication(auth =>
+                {
+                    auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(opt =>
+                {
+                    var validAudiences = configuration.GetSection("JWT:ValidAudiences").Get<string[]>();
+                    var validIssuer = configuration["JWT:ValidIssuer"];
+                    var issuerSigningKeySecret = configuration["JWT:IssuerSigningKeySecret"];
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidAudiences = validAudiences,
+                        ValidIssuer = validIssuer,
+                        RequireExpirationTime = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(issuerSigningKeySecret)),
+                        ValidateIssuerSigningKey = true,
+                    };
+                })
+                .Services;
     }
 }
