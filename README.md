@@ -42,7 +42,7 @@ dotnet-compose up
 ✔️ Add content dockefile<br/>
 ✔️ Add build scripts<br/>
 ✔️ Add database to content service<br/>
-✔️ Add migrations
+✔️ Add migrations<br/>
 ✔️ Add authentication service<br/>
 ✔️ Add database to authentication service<br/>
 ✔️ Add content dockefile<br/>
@@ -70,7 +70,7 @@ dotnet-compose up
 ❤️ Add master merge on post-staging accepted<br/>
 ❤️ Add CD production from master<br/>
 ❤️ Add readable coverage report<br/>
-❤️ Add domainname to production env
+❤️ Add domainname to production env<br/>
 
 ### Features nice to have
 
