@@ -1,5 +1,6 @@
 ﻿namespace Identity.Service.Controllers
 {
+    using System;
     using System.Threading.Tasks;
     using Identity.Service.Constants;
     using Identity.Service.Services;
@@ -32,11 +33,10 @@
         /// Logs in a user.
         /// </summary>
         /// <param name="model">The login viewmodel.</param>
-        /// <returns>A 200 OK response containing the newly created content or a 400 Bad Request if the content is
-        /// invalid.</returns>
+        /// <returns>A 200 OK response or a 400 Bad Request if the incoming parameters are invalid.</returns>
         [HttpPost("login", Name = AuthControllerRoute.Login)]
-        [SwaggerResponse(StatusCodes.Status201Created, "The content was created.", typeof(OkObjectResult))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "The content is invalid.", typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status200OK, "The user was logged in.", typeof(OkObjectResult))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "The incoming parameters are invalid.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public async Task<IActionResult> LoginAsync([FromBody] LoginViewModel model)
@@ -58,33 +58,25 @@
         /// <summary>
         /// Logs out a user.
         /// </summary>
-        /// <returns>A 200 OK response containing the newly created content or a 400 Bad Request if the content is
-        /// invalid.</returns>
+        /// <returns>A 200 OK response.</returns>
         [HttpGet("logout", Name = AuthControllerRoute.Logout)]
-        [SwaggerResponse(StatusCodes.Status201Created, "The content was created.", typeof(OkObjectResult))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "The content is invalid.", typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status200OK, "The user was logged out.", typeof(OkObjectResult))]
         [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public async Task<IActionResult> LogoutAsync()
         {
             var result = await this.userService.LogoutUserAsync().ConfigureAwait(false);
-            if (result.IsSuccess)
-            {
-                return new OkObjectResult(result);
-            }
-
-            return new BadRequestObjectResult("Some properties are not valid!");
+            return new OkObjectResult(result);
         }
 
         /// <summary>
         /// Registers a user.
         /// </summary>
         /// <param name="model">The register viewmodel.</param>
-        /// <returns>A 200 OK response containing the newly created content or a 400 Bad Request if the content is
-        /// invalid.</returns>
+        /// <returns>A 201 Created response or a 400 Bad Request if the incoming parameters are invalid.</returns>
         [HttpPost("register", Name = AuthControllerRoute.Register)]
-        [SwaggerResponse(StatusCodes.Status201Created, "The content was created.", typeof(OkObjectResult))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "The content is invalid.", typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status201Created, "The user was created.", typeof(OkObjectResult))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "The incoming paramters are invalid.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status406NotAcceptable, "The MIME type in the Accept HTTP header is not acceptable.", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status415UnsupportedMediaType, "The MIME type in the Content-Type HTTP header is unsupported.", typeof(ProblemDetails))]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterViewModel model)

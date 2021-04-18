@@ -20,16 +20,16 @@
 	"extensions": [
 		"ms-dotnettools.csharp",
 		"ms-azuretools.vscode-docker",
-		"dbaeumer.vscode-eslint",
 		"ms-vscode-remote.remote-containers",
 		"ms-vscode-remote.remote-wsl",
 		"fernandoescolar.vscode-solution-explorer",
 		"me-dutour-mathieu.vscode-github-actions",
 		"mtxr.sqltools-driver-mssql",
 		"editorconfig.editorconfig",
-		"esbenp.prettier-vscode",
 		"irongeek.vscode-env",
     "cake-build.cake-vscode"
+		// "dbaeumer.vscode-eslint",
+		// "esbenp.prettier-vscode",
 	],
 	"postCreateCommand": "dotnet tool restore",
 	// "remoteUser": "vscode"

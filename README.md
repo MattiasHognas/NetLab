@@ -43,12 +43,12 @@ dotnet-compose up
 ✔️ Add build scripts<br/>
 ✔️ Add database to content service<br/>
 ✔️ Add migrations
+✔️ Add authentication service<br/>
+✔️ Add database to authentication service<br/>
+✔️ Add content dockefile<br/>
 
 ### Features to implement
- 
-❤️ Add authentication service<br/>
-❤️ Add database to authentication service<br/>
-❤️ Add content dockefile<br/>
+
 ❤️ Add jwt validation to services<br/>
 ❤️ Add web frontend<br/>
 ❤️ Add SignalR to web frontend<br/>

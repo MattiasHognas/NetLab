@@ -1,54 +1,77 @@
 version: '3.8'
 services:
   identity:
-    container_name: identity
     build:
       context: src/services/identity/
       dockerfile: Dockerfile
+    hostname: identity
+    container_name: identity
     ports:
       - 5100:80
-    hostname: identity
     environment:
-      ASPNETCORE_ENVIRONMENT: 'Production'
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__ServiceConnection=Host=identitydb;Port=5432;Database=dev;Username=dev;Password=dev
+      - JWT__ValidIssuer=http://identity:5100
+      - JWT__ValidAudiences=['http://identity:5100','http://workspace:5200','http://content:5300']
+      - JWT__Secret=8d0b2d7b81744cc99baa567353519ed4
+      - JWT__TokenExpiryMinutes=120
     depends_on:
+      - identitydb
+    links:
       - identitydb
     networks:
       - backend
   workspace:
-    container_name: workspace
     build:
       context: src/services/workspace/
       dockerfile: Dockerfile
+    hostname: workspace
+    container_name: workspace
     ports:
       - 5200:80
-    hostname: workspace
     environment:
-      ASPNETCORE_ENVIRONMENT: 'Production'
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__ServiceConnection=Host=workspacedb;Port=5432;Database=dev;Username=dev;Password=dev
+      - JWT__ValidIssuer=http://identity:5100
+      - JWT__ValidAudiences=['http://identity:5100','http://workspace:5200','http://content:5300']
+      - JWT__Secret=8d0b2d7b81744cc99baa567353519ed4
+      - JWT__TokenExpiryMinutes=120
     depends_on:
       - workspacedb
+    links:
+      - workspacedb
+      - identity
     networks:
       - backend
   content:
-    container_name: content
     build:
       context: src/services/content/
       dockerfile: Dockerfile
+    hostname: content
+    container_name: content
     ports:
       - 5300:80
-    hostname: content
     environment:
-      ASPNETCORE_ENVIRONMENT: 'Production'
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__ServiceConnection=Host=contentdb;Port=5432;Database=dev;Username=dev;Password=dev
+      - JWT__ValidIssuer=http://identity:5100
+      - JWT__ValidAudiences=['http://identity:5100','http://workspace:5200','http://content:5300']
+      - JWT__Secret=8d0b2d7b81744cc99baa567353519ed4
+      - JWT__TokenExpiryMinutes=120
     depends_on:
       - contentdb
+    links:
+      - contentdb
+      - identity
     networks:
       - backend
   dbadmin:
-    container_name: dbadmin
     image: taivokasper/omnidb:latest
+    hostname: dbadmin
+    container_name: dbadmin
     ports:
       - 25482:25482
       - 8080:8080
-    hostname: dbadmin
     volumes:
       - config-omnidb:/etc/omnidb
     restart: unless-stopped
@@ -56,18 +79,22 @@ services:
       - identitydb
       - workspacedb
       - contentdb
+    links:
+      - identitydb
+      - workspacedb
+      - contentdb
     networks:
       - backend
   identitydb:
+    image: postgres:alpine
+    hostname: identitydb
     container_name: identitydb
-    image: postgres:13.2-alpine
     ports:
       - 5102:5432
-    hostname: identitydb
-    volumes:
-      - pgdata:/var/lib/postgresql/data/identity
-      - pgconf:/etc/postgresql
-      - pglog:/var/log/postgresql
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data/identity
+    #   - pgconf:/etc/postgresql
+    #   - pglog:/var/log/postgresql
     environment:
       POSTGRES_DB: dev
       POSTGRES_USER: dev
@@ -76,15 +103,15 @@ services:
     networks:
       - backend
   workspacedb:
+    image: postgres:alpine
+    hostname: workspacedb
     container_name: workspacedb
-    image: postgres:13.2-alpine
     ports:
       - 5202:5432
-    hostname: workspacedb
-    volumes:
-      - pgdata:/var/lib/postgresql/data/workspace
-      - pgconf:/etc/postgresql
-      - pglog:/var/log/postgresql
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data/workspace
+    #   - pgconf:/etc/postgresql
+    #   - pglog:/var/log/postgresql
     environment:
       POSTGRES_DB: dev
       POSTGRES_USER: dev
@@ -93,15 +120,15 @@ services:
     networks:
       - backend
   contentdb:
+    image: postgres:alpine
+    hostname: contentdb
     container_name: contentdb
-    image: postgres:13.2-alpine
     ports:
       - 5302:5432
-    hostname: contentdb
-    volumes:
-      - pgdata:/var/lib/postgresql/data/content
-      - pgconf:/etc/postgresql
-      - pglog:/var/log/postgresql
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data/content
+    #   - pgconf:/etc/postgresql
+    #   - pglog:/var/log/postgresql
     environment:
       POSTGRES_DB: dev
       POSTGRES_USER: dev
@@ -117,11 +144,11 @@ networks:
     driver: bridge
     name: frontend
 volumes:
-    config-omnidb:
-        driver: local
-    pgdata:
-        driver: local
-    pgconf:
-        driver: local
-    pglog:
-        driver: local
+  config-omnidb:
+    driver: local
+  pgdata:
+    driver: local
+  pgconf:
+    driver: local
+  pglog:
+    driver: local
