@@ -32,6 +32,7 @@ dotnet-compose up
 
 ✔️ Add devcontainer<br/>
 ✔️ Add devcontainer tools<br/>
+✔️ Add build script<br/>
 ✔️ Add workspace service<br/>
 ✔️ Add workspace integration tests<br/>
 ✔️ Add database to workspace service<br/>
@@ -40,12 +41,11 @@ dotnet-compose up
 ✔️ Add content integration tests<br/>
 ✔️ Add database to content service<br/>
 ✔️ Add content dockefile<br/>
-✔️ Add build scripts<br/>
 ✔️ Add database to content service<br/>
 ✔️ Add migrations<br/>
-✔️ Add authentication service<br/>
-✔️ Add database to authentication service<br/>
-✔️ Add content dockefile<br/>
+✔️ Add identity service<br/>
+✔️ Add database to identity service<br/>
+✔️ Add identity dockefile<br/>
 
 ### Features to implement
 
