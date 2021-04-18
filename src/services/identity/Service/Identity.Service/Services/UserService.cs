@@ -55,7 +55,7 @@
             {
                 return new UserManagerResponse
                 {
-                    Message = "User signed in Successfully",
+                    Message = "User signed in successfully",
                     IsSuccess = true,
                 };
             }
@@ -76,7 +76,7 @@
             await this.signInManager.SignOutAsync().ConfigureAwait(false);
             return new UserManagerResponse
             {
-                Message = "User created Successfully",
+                Message = "User logged out successfully",
                 IsSuccess = true,
             };
         }
@@ -114,7 +114,7 @@
             {
                 return new UserManagerResponse
                 {
-                    Message = "User created Successfully",
+                    Message = "User created successfully",
                     IsSuccess = true,
                 };
             }
